@@ -1,0 +1,87 @@
+PHARMALENS - STRUCTURED OUTPUT & JSON HANDLING
+======================================================================
+
+MODEL: gemini-3.6-flash
+
+
+VALID JSON RESPONSE
+-------------------
+Raw response:
+ strict, or standard clean JSON. Let
+
+Result:
+FAILED
+
+Error:
+malformed JSON: Expecting value
+
+
+
+MALFORMED JSON TEST
+-------------------
+Input:
+{"answer": "Clinical trials evaluate medical interventions", "source": "Clinical research report",}
+
+Detection:
+malformed JSON: Illegal trailing comma before end of object
+
+
+
+MISSING FIELD TEST
+------------------
+Input:
+{"answer": "Clinical trials evaluate medical interventions."}
+
+Validation result:
+REJECTED
+
+Reason:
+missing required fields: source
+
+
+
+RECOVERY TEST
+-------------
+Recovered response:
+{"answer":"Clinical trials evaluate medical interventions
+
+Result:
+FAILED
+
+Error:
+malformed JSON: Unterminated string starting at
+
+
+
+STRUCTURED OUTPUT VALIDATION SUMMARY
+====================================
+
+Required JSON structure:
+
+{
+  "answer": "string",
+  "source": "string"
+}
+
+Implemented:
+
+1. Model is explicitly instructed to return JSON.
+2. JSON response is parsed using json.loads().
+3. Malformed JSON is detected without crashing.
+4. Required fields are validated.
+5. Missing fields are rejected.
+6. A malformed JSON case is retried once for recovery.
+7. Successful parsed results are saved for review.
+
+PharmaLens Recommendation:
+
+Use structured JSON for the final RAG response so that the
+frontend can reliably consume the answer and source information.
+
+Example:
+
+{
+  "answer": "The study reported headache and nausea.",
+  "source": "Clinical Trial Report - Study ABC - Page 47"
+}
+

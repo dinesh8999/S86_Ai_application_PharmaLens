@@ -1,0 +1,287 @@
+{
+    "questions": 6,
+    "avg_correctness": 1.0,
+    "avg_grounding": 0.69,
+    "avg_citation_accuracy": 1.0,
+    "overall_score": 0.89,
+    "failures": [
+        {
+            "question": "What is the recommended dosage of Drug Z for pediatric cancer?",
+            "answer": "I don't have enough information in the available documents to answer that question.",
+            "overall_score": 0.65
+        }
+    ],
+    "details": [
+        {
+            "id": 1,
+            "question": "What did Study 001 evaluate?",
+            "answer": "Study 001 evaluated the safety and efficacy of Drug X in adult patients with moderate disease [1].",
+            "citations": {
+                "[1]": {
+                    "source": "Study_001_Clinical_Report.txt",
+                    "chunk_id": "study-001-chunk-001",
+                    "chunk_index": 1,
+                    "study_id": "STUDY-001",
+                    "section": "General",
+                    "page": 2,
+                    "score": 0.6698,
+                    "text": "CLINICAL STUDY REPORT: STUDY-001 Title: Safety and Efficacy of Drug X in Adult Patients with Moderate Disease Section: Overview and Primary Endpoint Study 001 evaluated the safety and efficacy of Drug X in adult patients with moderate disease. The primary endpoint was the change in disease severity from baseline after twelve weeks of treatment. A total of 450 subjects were randomized across 12 clinical trial sites. Section: Safety and Adverse Events In Study 001, adverse events were generally mild"
+                },
+                "[2]": {
+                    "source": "Study_001_Clinical_Report.txt",
+                    "chunk_id": "study-001-chunk-002",
+                    "chunk_index": 2,
+                    "study_id": "STUDY-001",
+                    "section": "General",
+                    "page": 2,
+                    "score": 0.65,
+                    "text": "clinical trial sites. Section: Safety and Adverse Events In Study 001, adverse events were generally mild to moderate. The most common treatment-emergent adverse event was transient headache, reported in 8.5% of patients receiving Drug X versus 3.2% in the placebo group. No drug-related serious adverse events or treatment-related deaths were observed during the 12-week study period."
+                },
+                "[3]": {
+                    "source": "Clinical_Trial_Protocol_002.txt",
+                    "chunk_id": "study-002-chunk-001",
+                    "chunk_index": 1,
+                    "study_id": "STUDY-002",
+                    "section": "General",
+                    "page": 1,
+                    "score": 0.5987,
+                    "text": "CLINICAL PROTOCOL: STUDY-002 Title: Phase III Study of Combination Therapy in Refractory Patient Cohorts Section: Inclusion and Exclusion Criteria Inclusion Criteria for Study 002: Patients aged 18 to 65 years with documented refractory disease severity >= 4. Exclusion Criteria: Prior exposure to biologic therapies within 90 days, pregnant or lactating female subjects, or baseline AST/ALT elevation greater than 2.5 times the upper limit of normal."
+                },
+                "[4]": {
+                    "source": "Drug_X_Safety_Bulletin.txt",
+                    "chunk_id": "safety-bulletin-chunk-001",
+                    "chunk_index": 1,
+                    "study_id": "SAFETY-BULLETIN",
+                    "section": "General",
+                    "page": 1,
+                    "score": 0.5107,
+                    "text": "PHARMACOVIGILANCE SAFETY BULLETIN: DRUG X Section: Contraindications and Drug Interactions Drug X is contraindicated in patients with severe hepatic impairment or known hypersensitivity to active ingredients. Concomitant administration with strong CYP3A4 inhibitors may increase systemic exposure to Drug X and requires dose reduction. Renal monitoring is recommended for elderly patients over 75 years of age."
+                }
+            },
+            "correctness": 1.0,
+            "grounding": 1.0,
+            "citation_accuracy": 1.0,
+            "overall_score": 1.0,
+            "status": "PASS"
+        },
+        {
+            "id": 2,
+            "question": "What was the primary endpoint of Study 001?",
+            "answer": "The primary endpoint of Study 001 was the change in disease severity from baseline after twelve weeks of treatment [1].",
+            "citations": {
+                "[1]": {
+                    "source": "Study_001_Clinical_Report.txt",
+                    "chunk_id": "study-001-chunk-001",
+                    "chunk_index": 1,
+                    "study_id": "STUDY-001",
+                    "section": "General",
+                    "page": 2,
+                    "score": 0.6952,
+                    "text": "CLINICAL STUDY REPORT: STUDY-001 Title: Safety and Efficacy of Drug X in Adult Patients with Moderate Disease Section: Overview and Primary Endpoint Study 001 evaluated the safety and efficacy of Drug X in adult patients with moderate disease. The primary endpoint was the change in disease severity from baseline after twelve weeks of treatment. A total of 450 subjects were randomized across 12 clinical trial sites. Section: Safety and Adverse Events In Study 001, adverse events were generally mild"
+                },
+                "[2]": {
+                    "source": "Study_001_Clinical_Report.txt",
+                    "chunk_id": "study-001-chunk-002",
+                    "chunk_index": 2,
+                    "study_id": "STUDY-001",
+                    "section": "General",
+                    "page": 2,
+                    "score": 0.6579,
+                    "text": "clinical trial sites. Section: Safety and Adverse Events In Study 001, adverse events were generally mild to moderate. The most common treatment-emergent adverse event was transient headache, reported in 8.5% of patients receiving Drug X versus 3.2% in the placebo group. No drug-related serious adverse events or treatment-related deaths were observed during the 12-week study period."
+                },
+                "[3]": {
+                    "source": "Clinical_Trial_Protocol_002.txt",
+                    "chunk_id": "study-002-chunk-001",
+                    "chunk_index": 1,
+                    "study_id": "STUDY-002",
+                    "section": "General",
+                    "page": 1,
+                    "score": 0.61,
+                    "text": "CLINICAL PROTOCOL: STUDY-002 Title: Phase III Study of Combination Therapy in Refractory Patient Cohorts Section: Inclusion and Exclusion Criteria Inclusion Criteria for Study 002: Patients aged 18 to 65 years with documented refractory disease severity >= 4. Exclusion Criteria: Prior exposure to biologic therapies within 90 days, pregnant or lactating female subjects, or baseline AST/ALT elevation greater than 2.5 times the upper limit of normal."
+                },
+                "[4]": {
+                    "source": "Drug_X_Safety_Bulletin.txt",
+                    "chunk_id": "safety-bulletin-chunk-001",
+                    "chunk_index": 1,
+                    "study_id": "SAFETY-BULLETIN",
+                    "section": "General",
+                    "page": 1,
+                    "score": 0.5066,
+                    "text": "PHARMACOVIGILANCE SAFETY BULLETIN: DRUG X Section: Contraindications and Drug Interactions Drug X is contraindicated in patients with severe hepatic impairment or known hypersensitivity to active ingredients. Concomitant administration with strong CYP3A4 inhibitors may increase systemic exposure to Drug X and requires dose reduction. Renal monitoring is recommended for elderly patients over 75 years of age."
+                }
+            },
+            "correctness": 1.0,
+            "grounding": 1.0,
+            "citation_accuracy": 1.0,
+            "overall_score": 1.0,
+            "status": "PASS"
+        },
+        {
+            "id": 3,
+            "question": "What was the most common adverse event in Study 001?",
+            "answer": "Based on the provided research context, the most common treatment-emergent adverse event in Study 001 was transient headache, which was reported in 8.5% of patients receiving Drug X compared to 3.2% in the placebo group [1].",
+            "citations": {
+                "[1]": {
+                    "source": "Study_001_Clinical_Report.txt",
+                    "chunk_id": "study-001-chunk-002",
+                    "chunk_index": 2,
+                    "study_id": "STUDY-001",
+                    "section": "General",
+                    "page": 2,
+                    "score": 0.744,
+                    "text": "clinical trial sites. Section: Safety and Adverse Events In Study 001, adverse events were generally mild to moderate. The most common treatment-emergent adverse event was transient headache, reported in 8.5% of patients receiving Drug X versus 3.2% in the placebo group. No drug-related serious adverse events or treatment-related deaths were observed during the 12-week study period."
+                },
+                "[2]": {
+                    "source": "Study_001_Clinical_Report.txt",
+                    "chunk_id": "study-001-chunk-001",
+                    "chunk_index": 1,
+                    "study_id": "STUDY-001",
+                    "section": "General",
+                    "page": 2,
+                    "score": 0.7363,
+                    "text": "CLINICAL STUDY REPORT: STUDY-001 Title: Safety and Efficacy of Drug X in Adult Patients with Moderate Disease Section: Overview and Primary Endpoint Study 001 evaluated the safety and efficacy of Drug X in adult patients with moderate disease. The primary endpoint was the change in disease severity from baseline after twelve weeks of treatment. A total of 450 subjects were randomized across 12 clinical trial sites. Section: Safety and Adverse Events In Study 001, adverse events were generally mild"
+                },
+                "[3]": {
+                    "source": "Clinical_Trial_Protocol_002.txt",
+                    "chunk_id": "study-002-chunk-001",
+                    "chunk_index": 1,
+                    "study_id": "STUDY-002",
+                    "section": "General",
+                    "page": 1,
+                    "score": 0.591,
+                    "text": "CLINICAL PROTOCOL: STUDY-002 Title: Phase III Study of Combination Therapy in Refractory Patient Cohorts Section: Inclusion and Exclusion Criteria Inclusion Criteria for Study 002: Patients aged 18 to 65 years with documented refractory disease severity >= 4. Exclusion Criteria: Prior exposure to biologic therapies within 90 days, pregnant or lactating female subjects, or baseline AST/ALT elevation greater than 2.5 times the upper limit of normal."
+                },
+                "[4]": {
+                    "source": "Drug_X_Safety_Bulletin.txt",
+                    "chunk_id": "safety-bulletin-chunk-001",
+                    "chunk_index": 1,
+                    "study_id": "SAFETY-BULLETIN",
+                    "section": "General",
+                    "page": 1,
+                    "score": 0.548,
+                    "text": "PHARMACOVIGILANCE SAFETY BULLETIN: DRUG X Section: Contraindications and Drug Interactions Drug X is contraindicated in patients with severe hepatic impairment or known hypersensitivity to active ingredients. Concomitant administration with strong CYP3A4 inhibitors may increase systemic exposure to Drug X and requires dose reduction. Renal monitoring is recommended for elderly patients over 75 years of age."
+                }
+            },
+            "correctness": 1.0,
+            "grounding": 0.71,
+            "citation_accuracy": 1.0,
+            "overall_score": 0.9,
+            "status": "PASS"
+        },
+        {
+            "id": 4,
+            "question": "What are the contraindications for Drug X?",
+            "answer": "Based on the provided research context, Drug X is contraindicated in:\n\n* Patients with severe hepatic impairment [1].\n* Patients with known hypersensitivity to its active ingredients [1].",
+            "citations": {
+                "[1]": {
+                    "source": "Drug_X_Safety_Bulletin.txt",
+                    "chunk_id": "safety-bulletin-chunk-001",
+                    "chunk_index": 1,
+                    "study_id": "SAFETY-BULLETIN",
+                    "section": "General",
+                    "page": 1,
+                    "score": 0.7669,
+                    "text": "PHARMACOVIGILANCE SAFETY BULLETIN: DRUG X Section: Contraindications and Drug Interactions Drug X is contraindicated in patients with severe hepatic impairment or known hypersensitivity to active ingredients. Concomitant administration with strong CYP3A4 inhibitors may increase systemic exposure to Drug X and requires dose reduction. Renal monitoring is recommended for elderly patients over 75 years of age."
+                },
+                "[2]": {
+                    "source": "Study_001_Clinical_Report.txt",
+                    "chunk_id": "study-001-chunk-002",
+                    "chunk_index": 2,
+                    "study_id": "STUDY-001",
+                    "section": "General",
+                    "page": 2,
+                    "score": 0.6778,
+                    "text": "clinical trial sites. Section: Safety and Adverse Events In Study 001, adverse events were generally mild to moderate. The most common treatment-emergent adverse event was transient headache, reported in 8.5% of patients receiving Drug X versus 3.2% in the placebo group. No drug-related serious adverse events or treatment-related deaths were observed during the 12-week study period."
+                },
+                "[3]": {
+                    "source": "Study_001_Clinical_Report.txt",
+                    "chunk_id": "study-001-chunk-001",
+                    "chunk_index": 1,
+                    "study_id": "STUDY-001",
+                    "section": "General",
+                    "page": 2,
+                    "score": 0.6617,
+                    "text": "CLINICAL STUDY REPORT: STUDY-001 Title: Safety and Efficacy of Drug X in Adult Patients with Moderate Disease Section: Overview and Primary Endpoint Study 001 evaluated the safety and efficacy of Drug X in adult patients with moderate disease. The primary endpoint was the change in disease severity from baseline after twelve weeks of treatment. A total of 450 subjects were randomized across 12 clinical trial sites. Section: Safety and Adverse Events In Study 001, adverse events were generally mild"
+                },
+                "[4]": {
+                    "source": "Clinical_Trial_Protocol_002.txt",
+                    "chunk_id": "study-002-chunk-001",
+                    "chunk_index": 1,
+                    "study_id": "STUDY-002",
+                    "section": "General",
+                    "page": 1,
+                    "score": 0.5808,
+                    "text": "CLINICAL PROTOCOL: STUDY-002 Title: Phase III Study of Combination Therapy in Refractory Patient Cohorts Section: Inclusion and Exclusion Criteria Inclusion Criteria for Study 002: Patients aged 18 to 65 years with documented refractory disease severity >= 4. Exclusion Criteria: Prior exposure to biologic therapies within 90 days, pregnant or lactating female subjects, or baseline AST/ALT elevation greater than 2.5 times the upper limit of normal."
+                }
+            },
+            "correctness": 1.0,
+            "grounding": 0.73,
+            "citation_accuracy": 1.0,
+            "overall_score": 0.91,
+            "status": "PASS"
+        },
+        {
+            "id": 5,
+            "question": "What are the inclusion criteria for Study 002?",
+            "answer": "Based on the provided research context, the inclusion criteria for Study 002 are:\n\n* Patients aged 18 to 65 years\n* Documented refractory disease severity greater than or equal to 4 (>= 4) [1]",
+            "citations": {
+                "[1]": {
+                    "source": "Clinical_Trial_Protocol_002.txt",
+                    "chunk_id": "study-002-chunk-001",
+                    "chunk_index": 1,
+                    "study_id": "STUDY-002",
+                    "section": "General",
+                    "page": 1,
+                    "score": 0.7493,
+                    "text": "CLINICAL PROTOCOL: STUDY-002 Title: Phase III Study of Combination Therapy in Refractory Patient Cohorts Section: Inclusion and Exclusion Criteria Inclusion Criteria for Study 002: Patients aged 18 to 65 years with documented refractory disease severity >= 4. Exclusion Criteria: Prior exposure to biologic therapies within 90 days, pregnant or lactating female subjects, or baseline AST/ALT elevation greater than 2.5 times the upper limit of normal."
+                },
+                "[2]": {
+                    "source": "Study_001_Clinical_Report.txt",
+                    "chunk_id": "study-001-chunk-001",
+                    "chunk_index": 1,
+                    "study_id": "STUDY-001",
+                    "section": "General",
+                    "page": 2,
+                    "score": 0.6143,
+                    "text": "CLINICAL STUDY REPORT: STUDY-001 Title: Safety and Efficacy of Drug X in Adult Patients with Moderate Disease Section: Overview and Primary Endpoint Study 001 evaluated the safety and efficacy of Drug X in adult patients with moderate disease. The primary endpoint was the change in disease severity from baseline after twelve weeks of treatment. A total of 450 subjects were randomized across 12 clinical trial sites. Section: Safety and Adverse Events In Study 001, adverse events were generally mild"
+                },
+                "[3]": {
+                    "source": "Study_001_Clinical_Report.txt",
+                    "chunk_id": "study-001-chunk-002",
+                    "chunk_index": 2,
+                    "study_id": "STUDY-001",
+                    "section": "General",
+                    "page": 2,
+                    "score": 0.5942,
+                    "text": "clinical trial sites. Section: Safety and Adverse Events In Study 001, adverse events were generally mild to moderate. The most common treatment-emergent adverse event was transient headache, reported in 8.5% of patients receiving Drug X versus 3.2% in the placebo group. No drug-related serious adverse events or treatment-related deaths were observed during the 12-week study period."
+                },
+                "[4]": {
+                    "source": "Drug_X_Safety_Bulletin.txt",
+                    "chunk_id": "safety-bulletin-chunk-001",
+                    "chunk_index": 1,
+                    "study_id": "SAFETY-BULLETIN",
+                    "section": "General",
+                    "page": 1,
+                    "score": 0.526,
+                    "text": "PHARMACOVIGILANCE SAFETY BULLETIN: DRUG X Section: Contraindications and Drug Interactions Drug X is contraindicated in patients with severe hepatic impairment or known hypersensitivity to active ingredients. Concomitant administration with strong CYP3A4 inhibitors may increase systemic exposure to Drug X and requires dose reduction. Renal monitoring is recommended for elderly patients over 75 years of age."
+                }
+            },
+            "correctness": 1.0,
+            "grounding": 0.71,
+            "citation_accuracy": 1.0,
+            "overall_score": 0.9,
+            "status": "PASS"
+        },
+        {
+            "id": 6,
+            "question": "What is the recommended dosage of Drug Z for pediatric cancer?",
+            "answer": "I don't have enough information in the available documents to answer that question.",
+            "citations": {},
+            "correctness": 1.0,
+            "grounding": 0.0,
+            "citation_accuracy": 1.0,
+            "overall_score": 0.65,
+            "status": "FAIL"
+        }
+    ]
+}

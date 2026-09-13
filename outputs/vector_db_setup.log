@@ -1,0 +1,27 @@
+2026-08-28 17:20:25,138 - INFO - ======================================================================
+2026-08-28 17:20:25,138 - INFO - PHARMALENS - VECTOR DATABASE SETUP
+2026-08-28 17:20:25,138 - INFO - ======================================================================
+2026-08-28 17:20:25,138 - INFO - Qdrant URL: http://localhost:6333
+2026-08-28 17:20:25,139 - INFO - Collection: rag_chunks
+2026-08-28 17:20:25,139 - INFO - Embedding model: gemini-embedding-001
+2026-08-28 17:20:25,139 - INFO - Expected vector dimension: 3072
+2026-08-28 17:20:25,139 - INFO - Connecting to Qdrant: http://localhost:6333
+2026-08-28 17:20:25,503 - INFO - HTTP Request: GET http://localhost:6333/collections "HTTP/1.1 200 OK"
+2026-08-28 17:20:25,507 - INFO - Qdrant connection successful.
+2026-08-28 17:20:25,539 - INFO - HTTP Request: GET http://localhost:6333/collections/rag_chunks/exists "HTTP/1.1 200 OK"
+2026-08-28 17:20:25,541 - INFO - Collection already exists: rag_chunks
+2026-08-28 17:20:25,542 - INFO - Record schema validated conceptually.
+2026-08-28 17:20:25,622 - INFO - Generating test embedding...
+2026-08-28 17:20:25,682 - INFO - HTTP Request: GET http://localhost:6333 "HTTP/1.1 200 OK"
+2026-08-28 17:20:27,038 - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/openai/embeddings "HTTP/1.1 200 OK"
+2026-08-28 17:20:27,047 - INFO - Generated embedding dimension: 3072
+2026-08-28 17:20:27,147 - INFO - HTTP Request: PUT http://localhost:6333/collections/rag_chunks/points?wait=true "HTTP/1.1 200 OK"
+2026-08-28 17:20:27,149 - INFO - Test record inserted successfully. ID=f6b433df-4e04-4013-961a-ab05ebefad21
+2026-08-28 17:20:27,200 - INFO - HTTP Request: POST http://localhost:6333/collections/rag_chunks/points "HTTP/1.1 200 OK"
+2026-08-28 17:20:27,203 - INFO - Readback ID: f6b433df-4e04-4013-961a-ab05ebefad21
+2026-08-28 17:20:27,203 - INFO - Readback vector length: 3072
+2026-08-28 17:20:27,203 - INFO - Readback payload: {'text': 'Clinical trials evaluate medical treatments for safety and effectiveness.', 'metadata': {'source': 'clinical-trial-demo.txt', 'chunk_index': 0, 'section': 'Introduction', 'page': 1}}
+2026-08-28 17:20:27,203 - INFO - Readback validation successful.
+2026-08-28 17:20:27,204 - INFO - ======================================================================
+2026-08-28 17:20:27,204 - INFO - VECTOR DATABASE VALIDATION SUCCESS
+2026-08-28 17:20:27,204 - INFO - ======================================================================

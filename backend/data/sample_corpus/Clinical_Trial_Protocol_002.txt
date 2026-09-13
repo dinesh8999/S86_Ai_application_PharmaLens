@@ -1,0 +1,5 @@
+--- PAGE 1 ---
+CLINICAL PROTOCOL: STUDY-002
+Title: Phase III Study of Combination Therapy in Refractory Patient Cohorts
+Section: Inclusion and Exclusion Criteria
+Inclusion Criteria for Study 002: Patients aged 18 to 65 years with documented refractory disease severity >= 4. Exclusion Criteria: Prior exposure to biologic therapies within 90 days, pregnant or lactating female subjects, or baseline AST/ALT elevation greater than 2.5 times the upper limit of normal.

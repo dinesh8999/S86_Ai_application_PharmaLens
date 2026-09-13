@@ -1,334 +1,133 @@
-# RAG Application
+# PharmaLens – Clinical Research Intelligence Assistant
 
-A clean, reproducible, and secure workspace for building an AI application using Retrieval-Augmented Generation (RAG).
+**PharmaLens** is a production-grade, AI-powered research intelligence platform designed for pharmaceutical organizations, clinical researchers, team leads, and knowledge base administrators. Built with Retrieval-Augmented Generation (RAG), Qdrant vector database, Google Gemini AI models, FastAPI, and React + TypeScript + Tailwind CSS.
 
-This project follows a structured development environment that keeps dependencies isolated, secrets protected, and project files organized.
+---
 
-## Project Structure
+## 🌟 Key Capabilities & Features
 
-```text
-rag-app/
-├── data/          # Source documents
-├── src/           # Ingestion, embeddings, retrieval, and application code
-├── prompts/       # Prompt templates
-├── outputs/       # Logs, generated answers, and evaluation results
-├── .env           # Real secrets, never committed
-├── .env.example   # Required environment variables without real values
-├── .gitignore     # Files and folders excluded from Git
-├── requirements.txt
-└── README.md
+- 🎯 **Grounded AI Answers**: Zero hallucination RAG engine strictly bound to retrieved context.
+- 📌 **Source Citation System**: Inline clickable citations (`[1]`, `[2]`) mapping directly to real document metadata (Source, Study ID, Section, Page, Chunk ID, Similarity Score).
+- 🛡️ **No-Source Fallback**: Returns `"I don't have enough information in the available documents to answer that question."` when context is missing or irrelevant.
+- ⚡ **Query Response Caching**: Hash-based response caching with 900s TTL for zero-latency repeated queries.
+- 📊 **Usage Analytics & Cost Estimation**: Structured JSONL request logging (`outputs/rag_requests.jsonl`) with input/output token tracking and USD cost calculation (`outputs/usage_report.json`).
+- 🔬 **Automated RAG Evaluation**: Scores Correctness, Grounding Ratio, Citation Accuracy, and Overall Quality (`outputs/evaluation_results.json` and `outputs/evaluation_summary.md`).
+- 🏥 **Healthcare UI/UX Aesthetics**: Modern healthcare AI dashboard with responsive navigation, document upload drag-and-drop, evidence inspection drawer, and live API connectivity status.
+
+---
+
+## 📁 Clean Architecture & Folder Structure
+
+```
+S86_Ai_application_PharmaLens/
+├── backend/
+│   ├── src/
+│   │   ├── config.py             # Settings & path resolution
+│   │   ├── ingestion.py          # Document parsing, chunking, payload builder & Qdrant indexing
+│   │   ├── embeddings.py         # Embedding generation & vector dimension matching
+│   │   ├── retrieval.py          # Qdrant client, vector similarity search & metadata filtering
+│   │   ├── rag_pipeline.py       # Core RAG pipeline with query caching & fallback
+│   │   ├── citations.py          # Context assembly & grounded prompt builder with citations ([1], [2])
+│   │   ├── evaluation.py         # Correctness, Grounding, Citation Accuracy & Overall scoring
+│   │   ├── monitoring.py         # Request logging, token/cost estimation & usage reports
+│   │   └── api.py                # FastAPI REST API
+│   ├── outputs/
+│   │   ├── evaluation_results.json
+│   │   ├── evaluation_summary.md
+│   │   ├── usage_report.json
+│   │   └── rag_requests.jsonl
+│   ├── uploads/                  # Ingested clinical research files
+│   ├── data/
+│   │   └── sample_corpus/        # Built-in sample clinical reports & bulletins
+│   ├── .env                      # API keys & model configuration
+│   ├── requirements.txt          # Python dependencies
+│   └── Dockerfile
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Sidebar.tsx       # Navigation bar
+│   │   │   ├── Header.tsx        # Top header & connectivity status
+│   │   │   ├── DashboardCards.tsx# Key performance widgets
+│   │   │   ├── ResearchAssistant.tsx # Q&A interface with interactive citations & evidence panel
+│   │   │   ├── CitationViewer.tsx# Source citation inspection modal
+│   │   │   ├── DocumentManager.tsx # Document uploader & chunk browser
+│   │   │   ├── EvaluationView.tsx# Grounding, Correctness & Citation Accuracy dashboard
+│   │   │   ├── UsageMonitoring.tsx # Token, cost, latency & request log analytics
+│   │   │   └── SettingsView.tsx  # System status & configuration settings
+│   │   ├── services/
+│   │   │   └── api.ts            # Frontend REST client
+│   │   ├── types/
+│   │   │   └── index.ts          # TypeScript type definitions
+│   │   ├── App.tsx
+│   │   ├── main.tsx
+│   │   └── index.css             # Tailwind CSS & healthcare styling
+│   ├── package.json
+│   ├── vite.config.ts
+│   ├── tailwind.config.js
+│   └── Dockerfile
+├── docker-compose.yml             # Orchestration for Backend, Frontend, and Qdrant
+└── README.md                      # Documentation
 ```
 
-## Prerequisites
+---
 
-Make sure Python is installed on your machine.
+## 🚀 Quick Start Guide
 
-## Setup
-
-### 1. Clone the repository
+### 1. Backend Setup
 
 ```bash
-git clone <repository-url>
-cd rag-app
-```
+# Navigate to backend directory
+cd backend
 
-### 2. Create a virtual environment
-
-```bash
-python -m venv .venv
-```
-
-### 3. Activate the virtual environment
-
-#### Windows
-
-```bash
-.venv\Scripts\activate
-```
-
-#### macOS / Linux
-
-```bash
-source .venv/bin/activate
-```
-
-After activation, the terminal should show:
-
-```text
-(.venv)
-```
-
-This ensures that the project's dependencies are isolated from other Python projects on the machine.
-
-## 4. Install Dependencies
-
-Install the dependencies listed in `requirements.txt`:
-
-```bash
+# Install dependencies (virtual environment recommended)
 pip install -r requirements.txt
+
+# Run FastAPI backend server
+python -m backend.src.api
 ```
+Backend API will run on `http://localhost:8000`.
 
-The project uses packages including:
-
-- OpenAI
-- ChromaDB
-- python-dotenv
-
-The exact versions are recorded in `requirements.txt` to make the environment reproducible.
-
-## 5. Configure Environment Variables
-
-Create a `.env` file in the project root.
-
-```env
-OPENAI_BASE_URL=https://api.openai.com/v1
-OPENAI_API_KEY=your-api-key
-CHAT_MODEL=gpt-4o-mini
-EMBED_MODEL=text-embedding-3-small
-```
-
-`OPENAI_BASE_URL` is optional and defaults to the OpenAI API endpoint when it
-is omitted. The embedding demo only requires `OPENAI_API_KEY` and
-`EMBED_MODEL`.
-
-### Important
-
-The `.env` file contains secrets and **must never be committed to Git**.
-
-The repository includes `.env.example` as a safe template:
-
-```env
-OPENAI_BASE_URL=
-OPENAI_API_KEY=
-CHAT_MODEL=
-EMBED_MODEL=
-```
-
-Copy `.env.example` to `.env` and provide your actual values.
-
-## Embedding Demo
-
-Run the API-based embedding example with:
+### 2. Frontend Setup
 
 ```bash
-python -m src.embedding_demo
+# Navigate to frontend directory
+cd frontend
+
+# Install Node dependencies
+npm install
+
+# Launch Vite development server
+npm run dev
 ```
+Frontend Web UI will run on `http://localhost:3000`.
 
-The demo stores each returned vector with its source text and retrieval
-metadata, then writes verification output to `outputs/embedding_demo.log`.
+### 3. Docker Compose Deployment
 
-## Embedding Quality Sanity Checks
-
-Run known-query retrieval checks against the ingested sample corpus:
+To launch all services (Qdrant, Backend, Frontend) with Docker:
 
 ```bash
-python -m src.embedding_sanity
+docker-compose up --build
 ```
 
-The command embeds chunks and queries with the same `EMBED_MODEL`, ranks chunks
-with cosine similarity, validates vector dimensions and source metadata, and
-writes `outputs/embedding_sanity_report.md`. The report includes expected-source
-checks, top-result previews, and risks such as generic chunks outranking a more
-specific result. Run the offline unit checks with:
-
-```bash
-python -m unittest discover -s tests
-```
-
-## 6. Loading Secrets
-
-Secrets should be loaded at runtime rather than hard-coded into the application.
-
-Example:
-
-```python
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
-
-api_key = os.getenv("OPENAI_API_KEY")
-```
-
-The API key should never be written directly into source code.
-
-## Reproducibility Test
-
-A new developer should be able to set up the project using the following process:
-
-```bash
-git clone <repository-url>
-cd rag-app
-
-python -m venv .venv
-```
-
-Activate the environment:
-
-```bash
-.venv\Scripts\activate
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Create the environment file:
-
-```bash
-copy .env.example .env
-```
-
-Then add the required API keys and configuration values to `.env`.
-
-If the project can be set up successfully on a fresh machine using these steps, the development environment is reproducible.
-
-## Security
-
-This project follows basic security practices for AI application development:
-
-- API keys are stored in `.env`.
-- `.env` is excluded from Git.
-- `.env.example` contains only variable names and no real secrets.
-- Dependencies are isolated inside a virtual environment.
-- Dependencies are recorded in `requirements.txt`.
-- Source documents are kept separately from application code.
-
-## Dependency Management
-
-Dependencies are recorded using:
-
-```bash
-pip freeze > requirements.txt
-```
-
-This captures the installed package versions so that another developer can recreate the same environment.
-
-## Development Principles
-
-This project follows four core principles:
-
-1. **Isolation**
-   Project dependencies are installed inside a virtual environment.
-
-2. **Organization**
-   Documents, source code, prompts, and outputs are separated into dedicated directories.
-
-3. **Security**
-   API keys and other secrets are stored outside the source code.
-
-4. **Reproducibility**
-   Dependencies and required environment variables are documented so the project can be recreated on another machine.
-
-## Structured JSON Output Demo
-
-This repository includes a structured-output example script for RAG responses:
-
-```bash
-python -m src.structured_output_demo
-```
-
-What it demonstrates:
-
-- Prompting the model for a fixed JSON shape (`answer`, `source`) using JSON response-format mode.
-- Parsing model output into a Python dictionary.
-- Handling malformed JSON safely with clear error reporting and best-effort recovery.
-- Validating required fields before downstream use.
-
-Sample parsed results are written to:
-
-```text
-outputs/structured_output_samples.json
-```
-
-The sample output includes a malformed-then-recovered case and a missing-field rejection case.
-
-## Chunk Metadata & Source Tracking
-
-Chunking preserves a consistent metadata dictionary beside every chunk. Each entry includes:
-
-- `source`: the source document identifier used for citation.
-- `chunk_index`: the chunk's one-based position in that document.
-- `char_start` and `char_end`: the range in the normalized text used by the chunker.
-- `section` and `page`: reserved fields populated when the source format provides them.
-
-Run the demonstration and regenerate the committed sample chunks with:
-
-```bash
-python -m src.chunking
-```
-
-The generated report at `outputs/chunking_comparison.md` shows text plus metadata for both chunking strategies and traces a retrieved chunk to a clickable source document and character range.
-
-## Reusable Prompt Templates
-
-Prompt templates are separated from business logic in the `prompts/` folder and rendered at runtime via `src/prompt_templates.py`.
-
-- `prompts/rag_system.txt` defines shared system behavior.
-- `prompts/rag_user.txt` defines a reusable user template with named placeholders:
-  - `{context}`
-  - `{question}`
-  - `{output_instructions}`
-
-Two features reuse the same template structure:
-
-- `src/prompt_demo.py` (chat-style request flow)
-- `src/structured_output_demo.py` (structured JSON response flow)
-
-To generate example rendered prompts for both chat and batch/CLI paths:
-
-```bash
-python -m src.template_render_demo
-```
-
-Rendered examples are saved to:
-
-````text
-outputs/prompt_template_renders.txt
-
-
-
-## Multi-Format Corpus Loader Demo
-
-This repository includes a corpus loader that converts mixed input documents into a common plain-text representation while preserving source identifiers.
-
-Run it with:
-
-```bash
-python -m src.corpus_loader_demo
-````
-
-What it demonstrates:
-
-- Loads multiple formats into plain text (`.txt`, `.md`, `.html`).
-- Survives bad input by skipping missing or unsupported files with clear messages.
-- Retains each document source (`source_id`) for future citation.
-- Prints each loaded document's text length and short sample snippet.
-
-Sample corpus files are in:
-
-```text
-data/sample_corpus/
-```
-
-Sample intake output is saved to:
-
-```text
-outputs/corpus_loader_intake.log
-```
-
-## Chunking Strategy Comparison
-
-Run the chunking comparison on the cleaned clinical report:
-
-```bash
-python -m src.chunking
-```
-
-The command compares paragraph-aware chunks with fixed-size chunks using overlap, reports chunk counts and average character sizes, and writes inspectable samples to:
-
-```text
-outputs/chunking_comparison.md
-```
+---
+
+## 🔌 API Reference Endpoints
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/query` | Submit natural language research question (`question`, `k`, `filters`) |
+| `POST` | `/api/documents/upload` | Upload & index clinical research file (`file`, `study_id`) |
+| `GET` | `/api/documents` | List indexed documents with chunk count & status |
+| `GET` | `/api/usage` | Retrieve aggregate RAG usage report & cost metrics |
+| `GET` | `/api/evaluation` | Get evaluation benchmark results |
+| `POST` | `/api/evaluation/run` | Run automated RAG evaluation suite |
+| `GET` | `/api/health` | Backend & Qdrant connectivity health check |
+
+---
+
+## 🧪 RAG Safety Rules & Verification
+
+1. **Context-Only Grounding**: The LLM system prompt mandates answering *only* using retrieved document context.
+2. **Citation Verification**: Every factual assertion contains citation markers (`[1]`, `[2]`) pointing back to inspectable vector payloads.
+3. **No Fake Citations**: Citations are generated exclusively for real retrieved chunks. If context is insufficient, citations are cleared and fallback response is served.
+4. **Deterministic Fallback**: In the absence of supported evidence, returns `"I don't have enough information in the available documents to answer that question."`
