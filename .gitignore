@@ -1,40 +1,20 @@
 .venv/
 __pycache__/
 *.pyc
-
 .env
 
-outputs/retrieval_query_embeddings.json
+node_modules/
+frontend/node_modules/
+frontend/dist/
+.vscode/
 
-data/*
-!data/.gitkeep
+# Qdrant local DB and lock files
+**/qdrant_db/
+**/*.lock
+backend/outputs/qdrant_db/
+
+# Uploads
+backend/uploads/*
+!backend/uploads/.gitkeep
 !data/sample_corpus/
 !data/sample_corpus/**
-
- 
-outputs/*
-!outputs/.gitkeep
-!outputs/llm_first_completion.log
-!outputs/prompt_comparison.log
-!outputs/prompt_template_renders.txt
-!outputs/text_cleaning.log
-
-!outputs/corpus_loader_intake.log
-!outputs/chunking_comparison.md
-!outputs/token_chunking.log
-!outputs/structured_output_samples.json
-!outputs/corpus_ingestion.log
-!outputs/embedding_demo.log
-!outputs/batch_embedding_summary.log
-!outputs/indexing_summary.log
-!outputs/retrieval_tuning.log
-!outputs/rag_pipeline.log
-!outputs/source_citation.log
-!outputs/evaluation_results.json
-!outputs/evaluation_summary.md
-!outputs/rag_cache.json
-!outputs/logs/rag_requests.jsonl
-!outputs/usage_report.json
-
-uploads/*
-!uploads/.gitkeep

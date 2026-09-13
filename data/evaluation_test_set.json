@@ -1,0 +1,72 @@
+[
+  {
+    "id": "eval-001",
+    "question": "What did Study 001 evaluate?",
+    "expected_points": [
+      "safety",
+      "efficacy",
+      "Drug X",
+      "adult patients with moderate disease"
+    ],
+    "expected_sources": [
+      "Study_001_Clinical_Report.pdf"
+    ]
+  },
+  {
+    "id": "eval-002",
+    "question": "What was the primary endpoint in Study 001?",
+    "expected_points": [
+      "change in disease severity",
+      "baseline",
+      "twelve weeks"
+    ],
+    "expected_sources": [
+      "Study_001_Clinical_Report.pdf"
+    ]
+  },
+  {
+    "id": "eval-003",
+    "question": "What adverse events were reported for Drug X?",
+    "expected_points": [
+      "headache",
+      "nausea",
+      "fatigue"
+    ],
+    "expected_sources": [
+      "Study_001_Clinical_Report.pdf"
+    ]
+  },
+  {
+    "id": "eval-004",
+    "question": "How did Drug Y compare with placebo?",
+    "expected_points": [
+      "Drug Y",
+      "placebo",
+      "improvement"
+    ],
+    "expected_sources": [
+      "Study_002_Clinical_Report.pdf"
+    ]
+  },
+  {
+    "id": "eval-005",
+    "question": "What did the safety analysis of Study 002 find?",
+    "expected_points": [
+      "no new major safety signals"
+    ],
+    "expected_sources": [
+      "Study_002_Clinical_Report.pdf"
+    ]
+  },
+  {
+    "id": "eval-006",
+    "question": "What safety information is associated with Drug X?",
+    "expected_points": [
+      "adverse event",
+      "Drug X"
+    ],
+    "expected_sources": [
+      "Drug_X_Safety_Bulletin.pdf"
+    ]
+  }
+]

@@ -1,0 +1,18 @@
+2026-08-28 17:15:56,620 - INFO - ======================================================================
+2026-08-28 17:15:56,620 - INFO - PHARMALENS - VECTOR DATABASE SETUP
+2026-08-28 17:15:56,620 - INFO - ======================================================================
+2026-08-28 17:15:56,621 - INFO - Qdrant URL: http://localhost:6333
+2026-08-28 17:15:56,621 - INFO - Collection: rag_chunks
+2026-08-28 17:15:56,621 - INFO - Embedding model: gemini-embedding-001
+2026-08-28 17:15:56,621 - INFO - Expected vector dimension: 3072
+2026-08-28 17:15:56,942 - INFO - HTTP Request: GET http://localhost:6333/collections "HTTP/1.1 200 OK"
+2026-08-28 17:15:56,945 - INFO - Qdrant connection successful.
+2026-08-28 17:15:56,988 - INFO - HTTP Request: GET http://localhost:6333/collections/rag_chunks/exists "HTTP/1.1 200 OK"
+2026-08-28 17:15:56,992 - INFO - Creating collection: rag_chunks
+2026-08-28 17:15:57,130 - INFO - HTTP Request: GET http://localhost:6333 "HTTP/1.1 200 OK"
+2026-08-28 17:15:57,384 - INFO - HTTP Request: PUT http://localhost:6333/collections/rag_chunks "HTTP/1.1 200 OK"
+2026-08-28 17:15:57,386 - INFO - Collection created successfully.
+2026-08-28 17:15:57,388 - INFO - Generating test embedding...
+2026-08-28 17:15:59,264 - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/openai/embeddings "HTTP/1.1 200 OK"
+2026-08-28 17:15:59,286 - INFO - Generated embedding dimension: 3072
+2026-08-28 17:15:59,373 - INFO - HTTP Request: PUT http://localhost:6333/collections/rag_chunks/points?wait=true "HTTP/1.1 400 Bad Request"

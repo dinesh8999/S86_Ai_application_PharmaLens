@@ -1,0 +1,11 @@
+{
+    "total_requests": 34,
+    "cache_hits": 0,
+    "cache_misses": 34,
+    "cache_hit_rate": 0.0,
+    "total_input_tokens": 14051,
+    "total_output_tokens": 717,
+    "total_estimated_cost": 0.002539,
+    "average_latency_ms": 4857.88,
+    "errors": 0
+}

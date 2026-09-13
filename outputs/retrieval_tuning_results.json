@@ -1,0 +1,320 @@
+{
+  "test_queries": [
+    {
+      "query": "What did Study 001 evaluate?",
+      "expected_source": "Study_001_Clinical_Report.pdf",
+      "expected_chunk": "study-001-chunk-001"
+    },
+    {
+      "query": "What was the primary endpoint in Study 001?",
+      "expected_source": "Study_001_Clinical_Report.pdf",
+      "expected_chunk": "study-001-chunk-002"
+    },
+    {
+      "query": "How did Drug Y compare with placebo?",
+      "expected_source": "Study_002_Clinical_Report.pdf",
+      "expected_chunk": "study-002-chunk-001"
+    },
+    {
+      "query": "What adverse event information is associated with Drug X?",
+      "expected_source": "Drug_X_Safety_Bulletin.pdf",
+      "expected_chunk": "safety-bulletin-001"
+    }
+  ],
+  "settings": [
+    {
+      "name": "baseline_k3",
+      "k": 3,
+      "min_score": 0.0
+    },
+    {
+      "name": "expanded_k5",
+      "k": 5,
+      "min_score": 0.0
+    },
+    {
+      "name": "strict_k3",
+      "k": 3,
+      "min_score": 0.7
+    }
+  ],
+  "results": [
+    {
+      "setting": "baseline_k3",
+      "queries": 4,
+      "source_hits": 4,
+      "source_hit_rate": 1.0,
+      "chunk_hits": 4,
+      "chunk_hit_rate": 1.0,
+      "top1_hits": 4,
+      "top1_hit_rate": 1.0,
+      "details": [
+        {
+          "query": "What did Study 001 evaluate?",
+          "expected_source": "Study_001_Clinical_Report.pdf",
+          "expected_chunk": "study-001-chunk-001",
+          "returned_sources": [
+            "Study_001_Clinical_Report.pdf",
+            "Study_002_Clinical_Report.pdf",
+            "Study_002_Clinical_Report.pdf"
+          ],
+          "returned_chunks": [
+            "study-001-chunk-001",
+            "study-002-chunk-001",
+            "study-002-chunk-002"
+          ],
+          "top1_chunk": "study-001-chunk-001",
+          "source_hit": true,
+          "chunk_hit": true,
+          "top1_hit": true
+        },
+        {
+          "query": "What was the primary endpoint in Study 001?",
+          "expected_source": "Study_001_Clinical_Report.pdf",
+          "expected_chunk": "study-001-chunk-002",
+          "returned_sources": [
+            "Study_001_Clinical_Report.pdf",
+            "Study_001_Clinical_Report.pdf",
+            "Study_002_Clinical_Report.pdf"
+          ],
+          "returned_chunks": [
+            "study-001-chunk-002",
+            "study-001-chunk-001",
+            "study-002-chunk-002"
+          ],
+          "top1_chunk": "study-001-chunk-002",
+          "source_hit": true,
+          "chunk_hit": true,
+          "top1_hit": true
+        },
+        {
+          "query": "How did Drug Y compare with placebo?",
+          "expected_source": "Study_002_Clinical_Report.pdf",
+          "expected_chunk": "study-002-chunk-001",
+          "returned_sources": [
+            "Study_002_Clinical_Report.pdf",
+            "Study_002_Clinical_Report.pdf",
+            "Study_001_Clinical_Report.pdf"
+          ],
+          "returned_chunks": [
+            "study-002-chunk-001",
+            "study-002-chunk-002",
+            "study-001-chunk-001"
+          ],
+          "top1_chunk": "study-002-chunk-001",
+          "source_hit": true,
+          "chunk_hit": true,
+          "top1_hit": true
+        },
+        {
+          "query": "What adverse event information is associated with Drug X?",
+          "expected_source": "Drug_X_Safety_Bulletin.pdf",
+          "expected_chunk": "safety-bulletin-001",
+          "returned_sources": [
+            "Drug_X_Safety_Bulletin.pdf",
+            "Study_001_Clinical_Report.pdf",
+            "Drug_X_Label.pdf"
+          ],
+          "returned_chunks": [
+            "safety-bulletin-001",
+            "study-001-chunk-001",
+            "drug-x-label-001"
+          ],
+          "top1_chunk": "safety-bulletin-001",
+          "source_hit": true,
+          "chunk_hit": true,
+          "top1_hit": true
+        }
+      ]
+    },
+    {
+      "setting": "expanded_k5",
+      "queries": 4,
+      "source_hits": 4,
+      "source_hit_rate": 1.0,
+      "chunk_hits": 4,
+      "chunk_hit_rate": 1.0,
+      "top1_hits": 4,
+      "top1_hit_rate": 1.0,
+      "details": [
+        {
+          "query": "What did Study 001 evaluate?",
+          "expected_source": "Study_001_Clinical_Report.pdf",
+          "expected_chunk": "study-001-chunk-001",
+          "returned_sources": [
+            "Study_001_Clinical_Report.pdf",
+            "Study_002_Clinical_Report.pdf",
+            "Study_002_Clinical_Report.pdf",
+            "Study_001_Clinical_Report.pdf",
+            "Study_002_Clinical_Report.pdf"
+          ],
+          "returned_chunks": [
+            "study-001-chunk-001",
+            "study-002-chunk-001",
+            "study-002-chunk-002",
+            "study-001-chunk-002",
+            "study-002-chunk-003"
+          ],
+          "top1_chunk": "study-001-chunk-001",
+          "source_hit": true,
+          "chunk_hit": true,
+          "top1_hit": true
+        },
+        {
+          "query": "What was the primary endpoint in Study 001?",
+          "expected_source": "Study_001_Clinical_Report.pdf",
+          "expected_chunk": "study-001-chunk-002",
+          "returned_sources": [
+            "Study_001_Clinical_Report.pdf",
+            "Study_001_Clinical_Report.pdf",
+            "Study_002_Clinical_Report.pdf",
+            "Study_002_Clinical_Report.pdf",
+            "Study_002_Clinical_Report.pdf"
+          ],
+          "returned_chunks": [
+            "study-001-chunk-002",
+            "study-001-chunk-001",
+            "study-002-chunk-002",
+            "study-002-chunk-001",
+            "study-002-chunk-003"
+          ],
+          "top1_chunk": "study-001-chunk-002",
+          "source_hit": true,
+          "chunk_hit": true,
+          "top1_hit": true
+        },
+        {
+          "query": "How did Drug Y compare with placebo?",
+          "expected_source": "Study_002_Clinical_Report.pdf",
+          "expected_chunk": "study-002-chunk-001",
+          "returned_sources": [
+            "Study_002_Clinical_Report.pdf",
+            "Study_002_Clinical_Report.pdf",
+            "Study_001_Clinical_Report.pdf",
+            "Study_001_Clinical_Report.pdf",
+            "Drug_X_Label.pdf"
+          ],
+          "returned_chunks": [
+            "study-002-chunk-001",
+            "study-002-chunk-002",
+            "study-001-chunk-001",
+            "study-001-chunk-002",
+            "drug-x-label-001"
+          ],
+          "top1_chunk": "study-002-chunk-001",
+          "source_hit": true,
+          "chunk_hit": true,
+          "top1_hit": true
+        },
+        {
+          "query": "What adverse event information is associated with Drug X?",
+          "expected_source": "Drug_X_Safety_Bulletin.pdf",
+          "expected_chunk": "safety-bulletin-001",
+          "returned_sources": [
+            "Drug_X_Safety_Bulletin.pdf",
+            "Study_001_Clinical_Report.pdf",
+            "Drug_X_Label.pdf",
+            "Study_002_Clinical_Report.pdf",
+            "Study_001_Clinical_Report.pdf"
+          ],
+          "returned_chunks": [
+            "safety-bulletin-001",
+            "study-001-chunk-001",
+            "drug-x-label-001",
+            "study-002-chunk-003",
+            "study-001-chunk-003"
+          ],
+          "top1_chunk": "safety-bulletin-001",
+          "source_hit": true,
+          "chunk_hit": true,
+          "top1_hit": true
+        }
+      ]
+    },
+    {
+      "setting": "strict_k3",
+      "queries": 4,
+      "source_hits": 4,
+      "source_hit_rate": 1.0,
+      "chunk_hits": 4,
+      "chunk_hit_rate": 1.0,
+      "top1_hits": 4,
+      "top1_hit_rate": 1.0,
+      "details": [
+        {
+          "query": "What did Study 001 evaluate?",
+          "expected_source": "Study_001_Clinical_Report.pdf",
+          "expected_chunk": "study-001-chunk-001",
+          "returned_sources": [
+            "Study_001_Clinical_Report.pdf",
+            "Study_002_Clinical_Report.pdf"
+          ],
+          "returned_chunks": [
+            "study-001-chunk-001",
+            "study-002-chunk-001"
+          ],
+          "top1_chunk": "study-001-chunk-001",
+          "source_hit": true,
+          "chunk_hit": true,
+          "top1_hit": true
+        },
+        {
+          "query": "What was the primary endpoint in Study 001?",
+          "expected_source": "Study_001_Clinical_Report.pdf",
+          "expected_chunk": "study-001-chunk-002",
+          "returned_sources": [
+            "Study_001_Clinical_Report.pdf",
+            "Study_001_Clinical_Report.pdf",
+            "Study_002_Clinical_Report.pdf"
+          ],
+          "returned_chunks": [
+            "study-001-chunk-002",
+            "study-001-chunk-001",
+            "study-002-chunk-002"
+          ],
+          "top1_chunk": "study-001-chunk-002",
+          "source_hit": true,
+          "chunk_hit": true,
+          "top1_hit": true
+        },
+        {
+          "query": "How did Drug Y compare with placebo?",
+          "expected_source": "Study_002_Clinical_Report.pdf",
+          "expected_chunk": "study-002-chunk-001",
+          "returned_sources": [
+            "Study_002_Clinical_Report.pdf",
+            "Study_002_Clinical_Report.pdf"
+          ],
+          "returned_chunks": [
+            "study-002-chunk-001",
+            "study-002-chunk-002"
+          ],
+          "top1_chunk": "study-002-chunk-001",
+          "source_hit": true,
+          "chunk_hit": true,
+          "top1_hit": true
+        },
+        {
+          "query": "What adverse event information is associated with Drug X?",
+          "expected_source": "Drug_X_Safety_Bulletin.pdf",
+          "expected_chunk": "safety-bulletin-001",
+          "returned_sources": [
+            "Drug_X_Safety_Bulletin.pdf",
+            "Study_001_Clinical_Report.pdf",
+            "Drug_X_Label.pdf"
+          ],
+          "returned_chunks": [
+            "safety-bulletin-001",
+            "study-001-chunk-001",
+            "drug-x-label-001"
+          ],
+          "top1_chunk": "safety-bulletin-001",
+          "source_hit": true,
+          "chunk_hit": true,
+          "top1_hit": true
+        }
+      ]
+    }
+  ],
+  "best_setting": "baseline_k3"
+}

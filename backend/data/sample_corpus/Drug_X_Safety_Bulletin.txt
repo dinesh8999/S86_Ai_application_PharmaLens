@@ -1,0 +1,4 @@
+--- PAGE 1 ---
+PHARMACOVIGILANCE SAFETY BULLETIN: DRUG X
+Section: Contraindications and Drug Interactions
+Drug X is contraindicated in patients with severe hepatic impairment or known hypersensitivity to active ingredients. Concomitant administration with strong CYP3A4 inhibitors may increase systemic exposure to Drug X and requires dose reduction. Renal monitoring is recommended for elderly patients over 75 years of age.
