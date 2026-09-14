@@ -28,19 +28,23 @@ import { EvidenceDrawer } from './EvidenceDrawer';
 interface ResearchAssistantProps {
   prefilledStudyId?: string;
   prefilledDocName?: string;
+  prefilledQuestion?: string;
   onClearPrefilledStudy?: () => void;
   onClearPrefilledDoc?: () => void;
+  onClearPrefilledQuestion?: () => void;
   onOpenDocument?: (docName: string, page?: number, highlightText?: string, section?: string) => void;
 }
 
 export const ResearchAssistant: React.FC<ResearchAssistantProps> = ({
   prefilledStudyId,
   prefilledDocName,
+  prefilledQuestion,
   onClearPrefilledStudy,
   onClearPrefilledDoc,
+  onClearPrefilledQuestion,
   onOpenDocument,
 }) => {
-  const [question, setQuestion] = useState<string>('');
+  const [question, setQuestion] = useState<string>(prefilledQuestion || '');
   const [topK, setTopK] = useState<number>(4);
   const [selectedStudyId, setSelectedStudyId] = useState<string>(prefilledStudyId || '');
   const [selectedDocName, setSelectedDocName] = useState<string>(prefilledDocName || '');
@@ -105,6 +109,13 @@ export const ResearchAssistant: React.FC<ResearchAssistantProps> = ({
       setSelectedDocName(prefilledDocName);
     }
   }, [prefilledDocName]);
+
+  useEffect(() => {
+    if (prefilledQuestion) {
+      setQuestion(prefilledQuestion);
+    }
+  }, [prefilledQuestion]);
+
 
   // Load study list on mount
   useEffect(() => {

@@ -204,3 +204,54 @@ export interface HealthStatus {
   embed_model: string;
   qdrant_url: string;
 }
+
+export interface RecentQueryItem {
+  request_id: string;
+  timestamp: string;
+  question: string;
+  evidence_strength: EvidenceStrength;
+  latency_ms: number;
+  cache_hit: boolean;
+  sources_count: number;
+}
+
+export interface DashboardMetrics {
+  user?: {
+    name?: string;
+    email?: string;
+    role?: string;
+  };
+  knowledge_base: {
+    total_studies: number;
+    total_documents: number;
+    total_pages: number;
+    total_chunks: number;
+    breakdown: {
+      clinical_trial_reports: number;
+      drug_labels: number;
+      safety_bulletins: number;
+    };
+  };
+  activity: {
+    total_queries: number;
+    cached_queries: number;
+    cache_hit_rate_percent: number;
+    avg_latency_ms: number;
+    estimated_cost_usd: number;
+  };
+  rag_quality: {
+    total_questions: number;
+    avg_correctness: number;
+    avg_grounding: number;
+    avg_citation_accuracy: number;
+    overall_score: number;
+    status: string;
+  };
+  recent_queries: RecentQueryItem[];
+  system_status: {
+    api: string;
+    qdrant: string;
+    llm: string;
+  };
+}
+

@@ -27,7 +27,7 @@ load_dotenv(BACKEND_DIR / ".env")
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", os.getenv("GEMINI_API_KEY", ""))
 OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai/")
-CHAT_MODEL = os.getenv("CHAT_MODEL", "gemini-2.5-flash")
+CHAT_MODEL = os.getenv("CHAT_MODEL", "gemini-3.6-flash")
 EMBED_MODEL = os.getenv("EMBED_MODEL", "text-embedding-3-small")
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
 QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "pharmalens_clinical_chunks")

@@ -9,11 +9,13 @@ import os
 from pathlib import Path
 from typing import Any
 # pyrefly: ignore [missing-import]
-from fastapi import APIRouter, HTTPException, UploadFile, File, Form
+from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Depends
 # pyrefly: ignore [missing-import]
 from fastapi.responses import FileResponse
 # pyrefly: ignore [missing-import]
 from backend.app.core.config import UPLOADS_DIR
+# pyrefly: ignore [missing-import]
+from backend.app.core.security import UserPayload, require_admin
 # pyrefly: ignore [missing-import]
 from backend.app.services.document_service import (
     get_all_documents,
@@ -64,8 +66,9 @@ def get_document(document_identifier: str):
 async def upload_document(
     file: UploadFile = File(...),
     study_id: str | None = Form(None),
+    current_user: UserPayload = Depends(require_admin),
 ):
-    """Upload and index a new clinical trial document into Qdrant."""
+    """Upload and index a new clinical trial document into Qdrant. Restricted to ADMIN users."""
     filename = file.filename or "uploaded_doc.txt"
     dest_path = UPLOADS_DIR / filename
 

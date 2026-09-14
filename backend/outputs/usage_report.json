@@ -1,12 +1,19 @@
 {
   "total_queries": 46,
+  "total_requests": 46,
   "cached_queries": 0,
+  "cache_hits": 0,
+  "cache_misses": 46,
   "cache_hit_rate_percent": 0.0,
+  "cache_hit_rate": 0.0,
   "total_input_tokens": 23380,
   "total_output_tokens": 1163,
   "total_tokens": 24543,
   "estimated_cost_usd": 0.002102,
+  "total_estimated_cost": 0.002102,
   "avg_latency_ms": 5668.16,
+  "average_latency_ms": 5668.16,
   "llm_requests": 46,
-  "embedding_requests": 46
+  "embedding_requests": 46,
+  "errors": 0
 }
