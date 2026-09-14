@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://s86-ai-application-pharmalens-1.onrender.com/api/:path*"
+    }
+  ]
+}

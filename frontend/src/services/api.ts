@@ -28,7 +28,7 @@ const API_BASE_URLS = [
   ...(configuredBase ? [configuredBase] : []),
   ...(isLocalBrowser
     ? ['/api', 'http://127.0.0.1:8000/api', 'http://localhost:8000/api', PRODUCTION_RENDER_API]
-    : ['/api', PRODUCTION_RENDER_API, 'http://127.0.0.1:8000/api', 'http://localhost:8000/api']),
+    : [PRODUCTION_RENDER_API, '/api']),
 ];
 
 let authTokenProvider: (() => Promise<string | null>) | null = null;
@@ -58,11 +58,20 @@ async function fetchWithFallback(endpoint: string, options: RequestInit = {}): P
     headers,
   };
 
+  const isUploadOrLong =
+    endpoint.includes('/upload') ||
+    endpoint.includes('/query') ||
+    endpoint.includes('/compare') ||
+    endpoint.includes('/evaluation') ||
+    options.body instanceof FormData;
+
+  const timeoutMs = isUploadOrLong ? 60000 : 15000;
+
   for (const baseUrl of API_BASE_URLS) {
     try {
       const url = `${baseUrl}${endpoint}`;
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 6000);
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
       const res = await fetch(url, {
         ...enhancedOptions,
@@ -230,7 +239,12 @@ export async function uploadDocument(file: File, studyId?: string): Promise<any>
 
   if (!res.ok) {
     const errText = await res.text();
-    throw new Error(`Upload failed: ${errText}`);
+    let detailMsg = errText;
+    try {
+      const parsed = JSON.parse(errText);
+      detailMsg = parsed.detail || parsed.message || errText;
+    } catch {}
+    throw new Error(detailMsg || 'Upload failed');
   }
 
   return await res.json();
