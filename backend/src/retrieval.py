@@ -24,13 +24,13 @@ def get_qdrant_client() -> QdrantClient:
     global _qdrant_client
     if _qdrant_client is None:
         settings = get_settings()
-        url = str(settings["qdrant_url"])
-        api_key = settings.get("qdrant_api_key") or None
+        url = str(settings.get("qdrant_url", "http://localhost:6333"))
+        api_key = (settings.get("qdrant_api_key") or "").strip() or None
 
         # Check if remote Qdrant Cloud cluster
-        if api_key or (url.startswith("https://") and "localhost" not in url):
+        if api_key and url.startswith("https://") and "localhost" not in url:
             try:
-                client = QdrantClient(url=url, api_key=api_key, timeout=10.0)
+                client = QdrantClient(url=url, api_key=api_key, timeout=3.0)
                 client.get_collections()
                 logger.info(f"Connected to remote Qdrant Cloud cluster at {url}")
                 _qdrant_client = client
@@ -38,17 +38,22 @@ def get_qdrant_client() -> QdrantClient:
             except Exception as cloud_err:
                 logger.warning(f"Could not connect to Qdrant Cloud at {url}: {cloud_err}")
 
-        # Local Qdrant server connection attempt
-        try:
-            client = QdrantClient(url=url, api_key=api_key, prefer_grpc=False, timeout=2.0)
-            client.get_collections()
-            logger.info(f"Connected to local Qdrant server at {url}")
-            _qdrant_client = client
-        except Exception as err:
-            logger.warning(f"Could not connect to Qdrant at {url} ({err}). Initializing local Qdrant instance.")
-            local_path = OUTPUTS_DIR / "qdrant_db"
-            local_path.mkdir(parents=True, exist_ok=True)
-            _qdrant_client = QdrantClient(path=str(local_path))
+        # Local Qdrant server connection attempt (short timeout for fast fallback)
+        if url.startswith("http://") and ("localhost" in url or "127.0.0.1" in url):
+            try:
+                client = QdrantClient(url=url, api_key=api_key, prefer_grpc=False, timeout=0.8)
+                client.get_collections()
+                logger.info(f"Connected to local Qdrant server at {url}")
+                _qdrant_client = client
+                return _qdrant_client
+            except Exception:
+                pass
+
+        # Fallback to embedded disk-backed Qdrant instance
+        local_path = OUTPUTS_DIR / "qdrant_db"
+        local_path.mkdir(parents=True, exist_ok=True)
+        _qdrant_client = QdrantClient(path=str(local_path))
+        logger.info(f"Initialized embedded local Qdrant instance at {local_path}")
 
     return _qdrant_client
 

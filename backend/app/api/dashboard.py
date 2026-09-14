@@ -135,7 +135,7 @@ def get_dashboard_metrics(current_user: UserPayload = Depends(get_current_user))
 
     # 5. System Status Signals
     # pyrefly: ignore [missing-import]
-    from backend.app.services.document_service import ensure_collection_exists
+    from backend.app.services.retrieval_service import ensure_collection_exists
     # pyrefly: ignore [missing-import]
     from backend.app.core.config import OPENAI_API_KEY
     try:

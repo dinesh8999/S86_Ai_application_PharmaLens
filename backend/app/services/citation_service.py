@@ -9,6 +9,7 @@ from __future__ import annotations
 import re
 import logging
 from typing import Any
+# pyrefly: ignore [missing-import]
 from backend.src.citations import assemble_context, build_citation_map, build_grounded_system_prompt
 
 logger = logging.getLogger(__name__)

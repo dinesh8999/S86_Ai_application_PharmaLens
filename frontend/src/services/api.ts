@@ -18,12 +18,17 @@ const configuredBase = rawEnvApi
   ? (rawEnvApi.endsWith('/api') ? rawEnvApi.replace(/\/+$/, '') : `${rawEnvApi.replace(/\/+$/, '')}/api`)
   : null;
 
+const isLocalBrowser =
+  typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname === '');
+
 const API_BASE_URLS = [
   ...(configuredBase ? [configuredBase] : []),
-  PRODUCTION_RENDER_API,
-  '/api',
-  'http://localhost:8000/api',
-  'http://127.0.0.1:8000/api',
+  ...(isLocalBrowser
+    ? ['/api', 'http://127.0.0.1:8000/api', 'http://localhost:8000/api', PRODUCTION_RENDER_API]
+    : ['/api', PRODUCTION_RENDER_API, 'http://127.0.0.1:8000/api', 'http://localhost:8000/api']),
 ];
 
 let authTokenProvider: (() => Promise<string | null>) | null = null;
@@ -37,7 +42,7 @@ async function fetchWithFallback(endpoint: string, options: RequestInit = {}): P
 
   // Clone headers and attach Authorization if available
   const headers = new Headers(options.headers || {});
-  if (authTokenProvider) {
+  if (authTokenProvider && endpoint !== '/health') {
     try {
       const token = await authTokenProvider();
       if (token && !headers.has('Authorization')) {
@@ -56,15 +61,23 @@ async function fetchWithFallback(endpoint: string, options: RequestInit = {}): P
   for (const baseUrl of API_BASE_URLS) {
     try {
       const url = `${baseUrl}${endpoint}`;
-      const res = await fetch(url, enhancedOptions);
-      if (res.ok || res.status === 400 || res.status === 500) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+      const res = await fetch(url, {
+        ...enhancedOptions,
+        signal: options.signal || controller.signal,
+      });
+      clearTimeout(timeoutId);
+
+      if (res.ok || res.status === 400 || res.status === 401 || res.status === 403 || res.status === 500) {
         return res;
       }
     } catch (err) {
       lastError = err;
     }
   }
-  throw lastError || new Error('Backend API unreachable on both /api and http://localhost:8000/api');
+  throw lastError || new Error('Backend API unreachable');
 }
 
 export async function fetchDashboardMetrics(): Promise<DashboardMetrics> {
@@ -199,7 +212,8 @@ export async function fetchDocumentDetail(documentIdentifier: string): Promise<D
 }
 
 export function getDocumentDownloadUrl(documentName: string): string {
-  return `http://localhost:8000/api/documents/download/${encodeURIComponent(documentName)}`;
+  const base = configuredBase || (isLocalBrowser ? 'http://127.0.0.1:8000/api' : '/api');
+  return `${base}/documents/download/${encodeURIComponent(documentName)}`;
 }
 
 export async function uploadDocument(file: File, studyId?: string): Promise<any> {
