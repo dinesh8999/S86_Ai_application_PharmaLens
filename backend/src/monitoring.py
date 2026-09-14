@@ -1,30 +1,32 @@
 """
 PharmaLens Monitoring & Usage Tracking Module
-Records request logs in JSONL format, calculates token usage & cost, and generates usage summaries.
+Calculates token costs, logs query requests, and aggregates usage statistics.
 """
 
 from __future__ import annotations
 
 import json
 import logging
-import time
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
-from backend.src.config import OUTPUTS_DIR
+
+from .config import OUTPUTS_DIR
 
 logger = logging.getLogger(__name__)
 
 REQUEST_LOG_FILE = OUTPUTS_DIR / "rag_requests.jsonl"
 USAGE_REPORT_FILE = OUTPUTS_DIR / "usage_report.json"
 
-# Cost rates (per token, estimated for Gemini Flash API)
-INPUT_TOKEN_RATE = 0.00000015
-OUTPUT_TOKEN_RATE = 0.0000006
+INPUT_COST_PER_MILLION = 0.075
+OUTPUT_COST_PER_MILLION = 0.30
 
 
 def calculate_cost(input_tokens: int, output_tokens: int) -> float:
-    """Calculate estimated API cost in USD."""
-    return round((input_tokens * INPUT_TOKEN_RATE) + (output_tokens * OUTPUT_TOKEN_RATE), 6)
+    """Calculate estimated API cost in USD based on token counts."""
+    input_cost = (input_tokens / 1_000_000.0) * INPUT_COST_PER_MILLION
+    output_cost = (output_tokens / 1_000_000.0) * OUTPUT_COST_PER_MILLION
+    return round(input_cost + output_cost, 6)
 
 
 def log_request(
@@ -36,106 +38,80 @@ def log_request(
     input_tokens: int,
     output_tokens: int,
     latency_ms: float,
-    error: str | None = None,
-) -> dict[str, Any]:
-    """
-    Log a RAG request to outputs/rag_requests.jsonl and update usage metrics.
-    """
-    cost = calculate_cost(input_tokens, output_tokens)
-    log_entry = {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "request_id": request_id,
-        "question": question,
-        "answer_preview": answer[:150] + ("..." if len(answer) > 150 else ""),
-        "sources": sources,
-        "cache_hit": cache_hit,
-        "input_tokens": input_tokens,
-        "output_tokens": output_tokens,
-        "estimated_cost": cost,
-        "latency_ms": round(latency_ms, 2),
-        "error": error,
-    }
-
+) -> None:
+    """Log request record into JSONL log file."""
     try:
+        record = {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "request_id": request_id,
+            "question": question,
+            "answer_preview": answer[:200] + "..." if len(answer) > 200 else answer,
+            "sources": sources,
+            "cache_hit": cache_hit,
+            "input_tokens": input_tokens,
+            "output_tokens": output_tokens,
+            "total_tokens": input_tokens + output_tokens,
+            "estimated_cost": calculate_cost(input_tokens, output_tokens),
+            "latency_ms": round(latency_ms, 2),
+        }
         with open(REQUEST_LOG_FILE, "a", encoding="utf-8") as f:
-            f.write(json.dumps(log_entry) + "\n")
+            f.write(json.dumps(record) + "\n")
     except Exception as err:
-        logger.error(f"Failed writing to request log file: {err}")
-
-    # Re-calculate and write summary usage report
-    update_usage_report()
-    return log_entry
+        logger.error(f"Failed logging request: {err}")
 
 
 def update_usage_report() -> dict[str, Any]:
-    """
-    Read all logs from rag_requests.jsonl and compile an aggregated usage report.
-    Saves report to outputs/usage_report.json.
-    """
-    if not REQUEST_LOG_FILE.exists():
-        empty_report = {
-            "total_requests": 0,
-            "cache_hits": 0,
-            "cache_misses": 0,
-            "cache_hit_rate": 0.0,
-            "total_input_tokens": 0,
-            "total_output_tokens": 0,
-            "total_estimated_cost": 0.0,
-            "average_latency_ms": 0.0,
-            "errors": 0,
-        }
-        with open(USAGE_REPORT_FILE, "w", encoding="utf-8") as f:
-            json.dump(empty_report, f, indent=4)
-        return empty_report
+    """Parse JSONL log file and return aggregated usage summary."""
+    total_queries = 0
+    cached_queries = 0
+    total_input_tokens = 0
+    total_output_tokens = 0
+    latencies: list[float] = []
 
-    total_requests = 0
-    cache_hits = 0
-    cache_misses = 0
-    total_input = 0
-    total_output = 0
-    total_cost = 0.0
-    total_latency = 0.0
-    errors = 0
+    if REQUEST_LOG_FILE.exists():
+        try:
+            with open(REQUEST_LOG_FILE, "r", encoding="utf-8") as f:
+                for line in f:
+                    if not line.strip():
+                        continue
+                    rec = json.loads(line)
+                    total_queries += 1
+                    if rec.get("cache_hit"):
+                        cached_queries += 1
+                    total_input_tokens += rec.get("input_tokens", 0)
+                    total_output_tokens += rec.get("output_tokens", 0)
+                    latencies.append(rec.get("latency_ms", 0.0))
+        except Exception as err:
+            logger.error(f"Error reading log file: {err}")
 
-    try:
-        with open(REQUEST_LOG_FILE, "r", encoding="utf-8") as f:
-            for line in f:
-                if not line.strip():
-                    continue
-                data = json.loads(line.strip())
-                total_requests += 1
-                if data.get("cache_hit"):
-                    cache_hits += 1
-                else:
-                    cache_misses += 1
-                total_input += data.get("input_tokens", 0)
-                total_output += data.get("output_tokens", 0)
-                total_cost += data.get("estimated_cost", 0.0)
-                total_latency += data.get("latency_ms", 0.0)
-                if data.get("error"):
-                    errors += 1
-    except Exception as err:
-        logger.error(f"Error reading request log: {err}")
-
-    hit_rate = round(cache_hits / total_requests, 4) if total_requests > 0 else 0.0
-    avg_latency = round(total_latency / total_requests, 2) if total_requests > 0 else 0.0
+    cache_hit_rate = round((cached_queries / max(total_queries, 1)) * 100, 1)
+    avg_latency = round(sum(latencies) / max(len(latencies), 1), 2)
+    total_cost = calculate_cost(total_input_tokens, total_output_tokens)
 
     report = {
-        "total_requests": total_requests,
-        "cache_hits": cache_hits,
-        "cache_misses": cache_misses,
-        "cache_hit_rate": hit_rate,
-        "total_input_tokens": total_input,
-        "total_output_tokens": total_output,
-        "total_estimated_cost": round(total_cost, 6),
+        "total_queries": total_queries,
+        "total_requests": total_queries,
+        "cached_queries": cached_queries,
+        "cache_hits": cached_queries,
+        "cache_misses": max(total_queries - cached_queries, 0),
+        "cache_hit_rate_percent": cache_hit_rate,
+        "cache_hit_rate": round(cache_hit_rate / 100.0, 2),
+        "total_input_tokens": total_input_tokens,
+        "total_output_tokens": total_output_tokens,
+        "total_tokens": total_input_tokens + total_output_tokens,
+        "estimated_cost_usd": total_cost,
+        "total_estimated_cost": total_cost,
+        "avg_latency_ms": avg_latency,
         "average_latency_ms": avg_latency,
-        "errors": errors,
+        "llm_requests": max(total_queries - cached_queries, 0),
+        "embedding_requests": max(total_queries - cached_queries, 0),
+        "errors": 0,
     }
 
     try:
         with open(USAGE_REPORT_FILE, "w", encoding="utf-8") as f:
-            json.dump(report, f, indent=4)
+            json.dump(report, f, indent=2)
     except Exception as err:
-        logger.error(f"Error saving usage report: {err}")
+        logger.error(f"Error writing usage report: {err}")
 
     return report

@@ -7,6 +7,8 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from typing import Any
+# pyrefly: ignore [missing-import]
 from dotenv import load_dotenv
 
 # Base paths
@@ -26,7 +28,7 @@ load_dotenv(BACKEND_DIR / ".env")
 load_dotenv(ROOT_DIR / ".env")
 
 
-def get_settings() -> dict[str, str | int]:
+def get_settings() -> dict[str, Any]:
     """Retrieve application settings."""
     openai_api_key = os.getenv("OPENAI_API_KEY", os.getenv("GEMINI_API_KEY", ""))
     openai_base_url = os.getenv(

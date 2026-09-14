@@ -7,10 +7,12 @@ from __future__ import annotations
 
 import logging
 from typing import Any
+# pyrefly: ignore [missing-import]
 from qdrant_client import QdrantClient
+# pyrefly: ignore [missing-import]
 from qdrant_client.models import Distance, PointStruct, VectorParams, Filter, FieldCondition, MatchValue
 
-from backend.src.config import get_settings, OUTPUTS_DIR
+from .config import get_settings, OUTPUTS_DIR
 
 logger = logging.getLogger(__name__)
 
@@ -18,16 +20,22 @@ _qdrant_client: QdrantClient | None = None
 
 
 def get_qdrant_client() -> QdrantClient:
-    """Return QdrantClient instance, falling back to local memory if connection fails."""
+    """Return QdrantClient instance, falling back to local memory/disk if connection fails."""
     global _qdrant_client
     if _qdrant_client is None:
         settings = get_settings()
         url = str(settings["qdrant_url"])
         try:
-            client = QdrantClient(url=url, timeout=3.0)
-            client.get_collections()
-            logger.info(f"Connected to Qdrant server at {url}")
-            _qdrant_client = client
+            import urllib.request
+            req = urllib.request.Request(f"{url.rstrip('/')}/collections", method="GET")
+            with urllib.request.urlopen(req, timeout=1.0) as resp:
+                if resp.status in (200, 204):
+                    client = QdrantClient(url=url, prefer_grpc=False, timeout=3.0)
+                    client.get_collections()
+                    logger.info(f"Connected to Qdrant server at {url}")
+                    _qdrant_client = client
+                else:
+                    raise Exception("Qdrant HTTP endpoint returned non-200")
         except Exception as err:
             logger.warning(f"Could not connect to Qdrant at {url} ({err}). Initializing local Qdrant instance.")
             local_path = OUTPUTS_DIR / "qdrant_db"
@@ -64,10 +72,6 @@ def ensure_collection_exists(collection_name: str | None = None, dimension: int 
 def store_chunks(points: list[dict[str, Any]], collection_name: str | None = None) -> int:
     """
     Store chunk vector points into Qdrant.
-    Each point dict should contain:
-    - id: unique string ID or UUID
-    - vector: list of float values
-    - payload: dict containing original_chunk_id, text, metadata
     """
     if not points:
         return 0
@@ -106,7 +110,6 @@ def retrieve_context(
     col_name = ensure_collection_exists(collection_name)
     client = get_qdrant_client()
 
-    # Build Qdrant metadata filters if supplied
     query_filter = None
     if filters:
         must_conditions = []

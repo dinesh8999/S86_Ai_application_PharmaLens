@@ -1,8 +1,13 @@
 import {
   QueryResponse,
   DocumentItem,
+  DocumentDetail,
+  StudySummary,
+  StudyDetail,
   UsageReport,
   EvaluationResult,
+  HealthStatus,
+  CorpusSummary,
 } from '../types';
 
 const API_BASE_URLS = ['http://localhost:8000/api', 'http://127.0.0.1:8000/api', '/api'];
@@ -23,20 +28,28 @@ async function fetchWithFallback(endpoint: string, options?: RequestInit): Promi
   throw lastError || new Error('Backend API unreachable on both /api and http://localhost:8000/api');
 }
 
+export async function getHealth(): Promise<HealthStatus> {
+  const res = await fetchWithFallback('/health');
+  if (!res.ok) {
+    throw new Error('Health check failed');
+  }
+  return await res.json();
+}
+
 export async function checkHealth(): Promise<boolean> {
   try {
-    const res = await fetchWithFallback('/health');
-    if (!res.ok) return false;
-    const data = await res.json();
-    return data.status === 'healthy';
+    const health = await getHealth();
+    return health.status === 'healthy';
   } catch {
     return false;
   }
 }
 
-export async function queryRAG(
+export async function queryResearch(
   question: string,
-  k: number = 4,
+  top_k: number = 4,
+  study_id?: string | null,
+  document_type?: string | null,
   filters?: Record<string, any>
 ): Promise<QueryResponse> {
   const res = await fetchWithFallback('/query', {
@@ -44,7 +57,13 @@ export async function queryRAG(
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ question, k, filters }),
+    body: JSON.stringify({
+      question,
+      k: top_k,
+      study_id: study_id || undefined,
+      document_type: document_type || undefined,
+      filters,
+    }),
   });
 
   if (!res.ok) {
@@ -55,12 +74,85 @@ export async function queryRAG(
   return await res.json();
 }
 
+export async function queryRAG(
+  question: string,
+  k: number = 4,
+  filters?: Record<string, any>
+): Promise<QueryResponse> {
+  return queryResearch(question, k, undefined, undefined, filters);
+}
+
+export async function compareStudies(
+  study_id_1: string,
+  study_id_2: string,
+  aspect: string = 'safety and efficacy'
+): Promise<QueryResponse> {
+  const res = await fetchWithFallback('/compare', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ study_id_1, study_id_2, aspect }),
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Comparison failed: ${errText}`);
+  }
+
+  return await res.json();
+}
+
+export async function fetchStudies(): Promise<StudySummary[]> {
+  const res = await fetchWithFallback('/studies');
+  if (!res.ok) {
+    throw new Error('Failed to fetch studies');
+  }
+  return await res.json();
+}
+
+export async function getStudies(): Promise<StudySummary[]> {
+  return fetchStudies();
+}
+
+export async function fetchStudyDetail(studyId: string): Promise<StudyDetail> {
+  const res = await fetchWithFallback(`/studies/${studyId}`);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch study details for ${studyId}`);
+  }
+  return await res.json();
+}
+
+export async function fetchCorpusSummary(): Promise<CorpusSummary> {
+  const res = await fetchWithFallback('/documents/summary');
+  if (!res.ok) {
+    throw new Error('Failed to fetch corpus summary');
+  }
+  return await res.json();
+}
+
 export async function fetchDocuments(): Promise<DocumentItem[]> {
   const res = await fetchWithFallback('/documents');
   if (!res.ok) {
     throw new Error('Failed to fetch documents');
   }
   return await res.json();
+}
+
+export async function getDocuments(): Promise<DocumentItem[]> {
+  return fetchDocuments();
+}
+
+export async function fetchDocumentDetail(documentIdentifier: string): Promise<DocumentDetail> {
+  const res = await fetchWithFallback(`/documents/${encodeURIComponent(documentIdentifier)}`);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch document details for ${documentIdentifier}`);
+  }
+  return await res.json();
+}
+
+export function getDocumentDownloadUrl(documentName: string): string {
+  return `http://localhost:8000/api/documents/download/${encodeURIComponent(documentName)}`;
 }
 
 export async function uploadDocument(file: File, studyId?: string): Promise<any> {
@@ -83,6 +175,14 @@ export async function uploadDocument(file: File, studyId?: string): Promise<any>
   return await res.json();
 }
 
+export async function fetchSourceDetail(sourceId: string): Promise<any> {
+  const res = await fetchWithFallback(`/sources/${encodeURIComponent(sourceId)}`);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch source details for ${sourceId}`);
+  }
+  return await res.json();
+}
+
 export async function fetchUsageMetrics(): Promise<UsageReport> {
   const res = await fetchWithFallback('/usage');
   if (!res.ok) {
@@ -91,12 +191,20 @@ export async function fetchUsageMetrics(): Promise<UsageReport> {
   return await res.json();
 }
 
+export async function getUsage(): Promise<UsageReport> {
+  return fetchUsageMetrics();
+}
+
 export async function fetchEvaluationResults(): Promise<EvaluationResult> {
   const res = await fetchWithFallback('/evaluation');
   if (!res.ok) {
     throw new Error('Failed to fetch evaluation results');
   }
   return await res.json();
+}
+
+export async function getEvaluation(): Promise<EvaluationResult> {
+  return fetchEvaluationResults();
 }
 
 export async function runEvaluation(): Promise<EvaluationResult> {
