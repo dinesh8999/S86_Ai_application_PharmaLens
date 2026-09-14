@@ -6,8 +6,11 @@ from __future__ import annotations
 
 import os
 import logging
+# pyrefly: ignore [missing-import]
 from fastapi import FastAPI
+# pyrefly: ignore [missing-import]
 from fastapi.middleware.cors import CORSMiddleware
+# pyrefly: ignore [missing-import]
 from backend.app.api import (
     dashboard,
     documents,

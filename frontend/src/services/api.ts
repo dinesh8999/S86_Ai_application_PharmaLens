@@ -11,6 +11,8 @@ import {
   DashboardMetrics,
 } from '../types';
 
+const PRODUCTION_RENDER_API = 'https://s86-ai-application-pharmalens-1.onrender.com/api';
+
 const rawEnvApi = import.meta.env.VITE_API_BASE_URL?.trim();
 const configuredBase = rawEnvApi
   ? (rawEnvApi.endsWith('/api') ? rawEnvApi.replace(/\/+$/, '') : `${rawEnvApi.replace(/\/+$/, '')}/api`)
@@ -18,6 +20,7 @@ const configuredBase = rawEnvApi
 
 const API_BASE_URLS = [
   ...(configuredBase ? [configuredBase] : []),
+  PRODUCTION_RENDER_API,
   '/api',
   'http://localhost:8000/api',
   'http://127.0.0.1:8000/api',
