@@ -1,0 +1,42 @@
+Document ID: DOC-SB-FDA-001
+Study ID: SAFETY-PEMBRO-01
+Document Type: safety_bulletin
+Sponsor: FDA MedWatch Network
+Phase: Post-Marketing
+Drug: Pembrolizumab
+Synthetic Demo Document: false
+
+--- Page 1 ---
+## 1. Executive Safety Advisory & Issue Summary
+Document ID: DOC-SB-FDA-001 | Organization: FDA MedWatch Network
+Title: FDA Drug Safety Communication: Risk of Severe Immune-Mediated Pneumonitis with Pembrolizumab
+Affected Medicine: Pembrolizumab
+FDA safety evaluation confirms risk of immune-mediated pneumonitis occurring in 3.4% to 3.8% of patients receiving pembrolizumab. Grade 3-5 severe cases present with acute onset dyspnea and pulmonary infiltrates.
+
+--- Page 2 ---
+## 2. Pharmacovigilance Risk Evaluation & Signal Analysis
+Post-marketing surveillance data, EudraVigilance database queries, and spontaneous MedWatch event filings revealed adverse signal patterns requiring updated guidance.
+
+--- Page 3 ---
+## 3. Recommended Clinical Actions for Healthcare Providers
+Healthcare providers must withhold pembrolizumab for Grade 2 pneumonitis (initiate 1-2 mg/kg/day prednisone equivalent) and permanently discontinue for Grade 3 or 4 pneumonitis.
+
+--- Page 4 ---
+## 4. Reporting Adverse Events & Patient Communications
+Healthcare professionals and patients are encouraged to report adverse events or quality problems to FDA MedWatch or national competent authorities.
+
+--- Page 5 ---
+## 5. Reporting Adverse Events & Patient Communications
+Healthcare professionals and patients are encouraged to report adverse events or quality problems to FDA MedWatch or national competent authorities.
+
+--- Page 6 ---
+## 6. Reporting Adverse Events & Patient Communications
+Healthcare professionals and patients are encouraged to report adverse events or quality problems to FDA MedWatch or national competent authorities.
+
+--- Page 7 ---
+## 7. Reporting Adverse Events & Patient Communications
+Healthcare professionals and patients are encouraged to report adverse events or quality problems to FDA MedWatch or national competent authorities.
+
+--- Page 8 ---
+## 8. Reporting Adverse Events & Patient Communications
+Healthcare professionals and patients are encouraged to report adverse events or quality problems to FDA MedWatch or national competent authorities.

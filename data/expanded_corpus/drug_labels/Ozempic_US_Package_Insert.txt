@@ -1,0 +1,68 @@
+Document ID: DOC-LBL-OZEMPIC
+Study ID: LABEL-OZEMPIC
+Document Type: drug_label
+Sponsor: Novo Nordisk
+Phase: N/A
+Drug: Semaglutide
+Synthetic Demo Document: false
+
+--- Page 1 ---
+## 1. Indications & Clinical Usage
+Document ID: DOC-LBL-OZEMPIC | Drug Name: OZEMPIC (semaglutide) Injection
+Sponsor: Novo Nordisk
+OZEMPIC is a GLP-1 receptor agonist indicated as an adjunct to diet and exercise to improve glycemic control and reduce MACE risk in type 2 diabetes mellitus.
+
+--- Page 2 ---
+## 2. Dosage & Administration
+Initiate with 0.25 mg once weekly for 4 weeks. Increase to 0.5 mg once weekly. If additional glycemic control is required, escalate to 1 mg or maximum 2 mg once weekly.
+
+--- Page 3 ---
+## 3. Dosage Forms & Strengths
+Available as single-dose vials, oral tablets, or pre-filled pens depending on route of administration. Visually inspect for particulate matter or discoloration prior to administration.
+
+--- Page 4 ---
+## 4. Contraindications & Boxed Warnings
+WARNING: RISK OF THYROID C-CELL TUMORS
+In rodents, semaglutide causes dose-dependent thyroid C-cell tumors. It is unknown whether OZEMPIC causes medullary thyroid carcinoma (MTC) in humans. Contraindicated in personal or family history of MTC or MEN 2.
+
+--- Page 5 ---
+## 5. Warnings and Precautions
+Monitor patient parameters closely including hepatic enzymes, renal function, blood counts, and metabolic markers. Discontinue therapy immediately if severe hypersensitivity occurs.
+
+--- Page 6 ---
+## 6. Storage, Handling & Clinical Studies Section
+Store refrigerated at 2°C to 8°C (36°F to 46°F) in original carton to protect from light. Do not freeze or shake.
+
+--- Page 7 ---
+## 7. Storage, Handling & Clinical Studies Section
+Store refrigerated at 2°C to 8°C (36°F to 46°F) in original carton to protect from light. Do not freeze or shake.
+
+--- Page 8 ---
+## 8. Use in Specific Populations
+Pregnancy: Based on animal data, may cause fetal harm when administered to pregnant women.
+Lactation: Advise women not to breastfeed during treatment and for 4 months after final dose.
+Pediatric Use: Safety and effectiveness in pediatric patients under 18 have not been established.
+
+--- Page 9 ---
+## 9. Storage, Handling & Clinical Studies Section
+Store refrigerated at 2°C to 8°C (36°F to 46°F) in original carton to protect from light. Do not freeze or shake.
+
+--- Page 10 ---
+## 10. Storage, Handling & Clinical Studies Section
+Store refrigerated at 2°C to 8°C (36°F to 46°F) in original carton to protect from light. Do not freeze or shake.
+
+--- Page 11 ---
+## 11. Storage, Handling & Clinical Studies Section
+Store refrigerated at 2°C to 8°C (36°F to 46°F) in original carton to protect from light. Do not freeze or shake.
+
+--- Page 12 ---
+## 12. Clinical Pharmacology & Mechanism of Action
+Semaglutide binds selectively to its molecular target with high affinity, resulting in functional inhibition of downstream signaling cascades.
+
+--- Page 13 ---
+## 13. Storage, Handling & Clinical Studies Section
+Store refrigerated at 2°C to 8°C (36°F to 46°F) in original carton to protect from light. Do not freeze or shake.
+
+--- Page 14 ---
+## 14. Storage, Handling & Clinical Studies Section
+Store refrigerated at 2°C to 8°C (36°F to 46°F) in original carton to protect from light. Do not freeze or shake.

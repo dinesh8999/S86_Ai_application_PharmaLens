@@ -56,6 +56,17 @@ app.include_router(evaluation.router, prefix="/api")
 app.include_router(health.router, prefix="/api")
 
 
+@app.on_event("startup")
+def startup_event():
+    """Ensure clinical corpus documents exist on startup."""
+    try:
+        from backend.app.services.document_service import get_all_documents
+        docs = get_all_documents()
+        logger.info(f"PharmaLens initialized with {len(docs)} documents.")
+    except Exception as err:
+        logger.warning(f"Startup initialization notice: {err}")
+
+
 @app.get("/")
 def root():
     return {

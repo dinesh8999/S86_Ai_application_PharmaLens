@@ -1,0 +1,106 @@
+Document ID: DOC-CTR-TRAILBLAZER
+Study ID: TRAILBLAZER-ALZ
+Document Type: clinical_trial_report
+Sponsor: Eli Lilly
+Phase: Phase 3
+Drug: Donanemab
+Indication: Early Symptomatic Alzheimer's Disease
+Synthetic Demo Document: false
+
+--- Page 1 ---
+## 1. Administrative Information & Protocol Summary
+Document ID: DOC-CTR-TRAILBLAZER | Study ID: TRAILBLAZER-ALZ
+Protocol Title: TRAILBLAZER-ALZ 2: Donanemab in Early Symptomatic Alzheimer's Disease.
+Sponsor: Eli Lilly Clinical Development Division.
+Principal Investigator: Dr. Marcus Vance, MD, PhD, Global Clinical Oncology Consortium.
+Document Date: October 24, 2024.
+Version: Final Registrational Clinical Study Report v3.0.
+
+This document represents the definitive registrational Clinical Study Report for TRAILBLAZER-ALZ, evaluating the therapeutic efficacy, safety profile, pharmacokinetics, and clinical utility of Donanemab in patients with Early Symptomatic Alzheimer's Disease.
+
+--- Page 2 ---
+## 2. Study Objectives & Hypothesis
+Primary Objective: To evaluate Overall Survival (OS) and Progression-Free Survival (PFS) of Donanemab compared to active comparator or placebo control in patients with Early Symptomatic Alzheimer's Disease.
+Secondary Objectives: Objective Response Rate (ORR), Duration of Response (DOR), Time to Disease Progression (TDP), Patient-Reported Health Outcomes (PRO), and overall safety/tolerability profile.
+
+--- Page 3 ---
+## 3. Study Design & Randomization Scheme
+TRAILBLAZER-ALZ was conducted as a randomized, double-blind, active-controlled, multicenter Phase 3 trial across 142 clinical sites in North America, Europe, and Asia-Pacific.
+Patients were stratified by baseline performance status (ECOG 0 vs 1), geographic region, and baseline biomarker status prior to 1:1 randomization.
+
+--- Page 4 ---
+## 4. Inclusion Criteria
+1. Histologically or cytologically confirmed diagnosis of Early Symptomatic Alzheimer's Disease.
+2. Age >= 18 years at the time of signing informed consent.
+3. ECOG Performance Status of 0 or 1.
+4. Measurable disease according to RECIST v1.1 or protocol-specified clinical criteria.
+5. Adequate hematologic, renal, and hepatic function (ANC >= 1,500/mcL, Platelets >= 100,000/mcL, Creatinine Clearance >= 60 mL/min).
+
+--- Page 5 ---
+## 5. Exclusion Criteria
+1. Prior therapy with targeted agents targeting the same molecular pathway within 28 days of randomization.
+2. Active CNS metastases or leptomeningeal disease requiring systemic corticosteroids.
+3. Active, documented autoimmune condition requiring active systemic immunosuppression (>10 mg/day prednisone equivalent).
+4. History of severe drug-induced hypersensitivity or cardiac conduction abnormalities.
+
+--- Page 6 ---
+## 6. Patient Demographics & Baseline Characteristics
+A total of 840 patients were randomized (TRAILBLAZER-ALZ arm n=420; control arm n=420).
+Median age was 63.5 years (range 22-87). 56.4% were male, 43.6% female. Baseline ECOG score 0 (58.2%), ECOG 1 (41.8%). Baseline disease burden and prior therapeutic regimens were well balanced across both treatment groups.
+
+--- Page 7 ---
+## 7. Treatment Regimen & Dosing Schedule
+Patients received Donanemab administered per protocol-specified dosing schedule until disease progression, unacceptable toxicity, or patient withdrawal. Dose modifications, holds, and reductions followed pre-specified safety algorithms.
+
+--- Page 8 ---
+## 8. Primary Efficacy Endpoint Analysis
+Primary Endpoint (iADRS): Donanemab significantly slowed clinical decline by 35.1% at 76 weeks (p < 0.001). CDR-SB decline was slowed by 28.9%.
+
+--- Page 9 ---
+## 9. Secondary Efficacy & Biomarker Endpoints
+Secondary analyses demonstrated consistent benefit across subgroup parameters, including age (<65 vs >=65), sex, ECOG score, and prior treatment history.
+
+--- Page 10 ---
+## 10. Pharmacokinetics & Biomarker Subgroup Analysis
+Detailed pharmacokinetic modeling confirmed predictable steady-state exposure for Donanemab. AUC and Cmax values showed linear kinetics without significant accumulation over 52 weeks of continuous therapy.
+
+--- Page 11 ---
+## 11. Pharmacokinetics & Biomarker Subgroup Analysis
+Detailed pharmacokinetic modeling confirmed predictable steady-state exposure for Donanemab. AUC and Cmax values showed linear kinetics without significant accumulation over 52 weeks of continuous therapy.
+
+--- Page 12 ---
+## 12. Pharmacokinetics & Biomarker Subgroup Analysis
+Detailed pharmacokinetic modeling confirmed predictable steady-state exposure for Donanemab. AUC and Cmax values showed linear kinetics without significant accumulation over 52 weeks of continuous therapy.
+
+--- Page 13 ---
+## 13. Pharmacokinetics & Biomarker Subgroup Analysis
+Detailed pharmacokinetic modeling confirmed predictable steady-state exposure for Donanemab. AUC and Cmax values showed linear kinetics without significant accumulation over 52 weeks of continuous therapy.
+
+--- Page 14 ---
+## 14. Safety & Adverse Events Analysis
+Amyloid-Related Imaging Abnormalities:
+ARIA-E (edema/effusion) occurred in 24.0% of Donanemab patients vs 2.1% in placebo. Symptomatic ARIA-E occurred in 6.1%. ARIA-H (microhemorrhages/siderosis) occurred in 31.4% vs 13.6%.
+
+--- Page 15 ---
+## 15. Serious Adverse Events & Treatment Discontinuations
+Serious treatment-related adverse events (SAEs) occurred in 7.4% of subjects in the Donanemab group compared to 14.8% in the control group. Treatment discontinuations due to drug-related toxicities occurred in 4.5% of patients.
+
+--- Page 16 ---
+## 16. Statistical Methods & Sensitivity Analyses
+Pre-specified sensitivity analyses using Cox proportional hazards models and rank-preserving structural failure time (RPSFT) modeling confirmed the robustness of the primary endpoint outcomes.
+
+--- Page 17 ---
+## 17. Statistical Methods & Sensitivity Analyses
+Pre-specified sensitivity analyses using Cox proportional hazards models and rank-preserving structural failure time (RPSFT) modeling confirmed the robustness of the primary endpoint outcomes.
+
+--- Page 18 ---
+## 18. Statistical Methods & Sensitivity Analyses
+Pre-specified sensitivity analyses using Cox proportional hazards models and rank-preserving structural failure time (RPSFT) modeling confirmed the robustness of the primary endpoint outcomes.
+
+--- Page 19 ---
+## 19. Statistical Methods & Sensitivity Analyses
+Pre-specified sensitivity analyses using Cox proportional hazards models and rank-preserving structural failure time (RPSFT) modeling confirmed the robustness of the primary endpoint outcomes.
+
+--- Page 20 ---
+## 20. Discussion, Risk-Benefit Profile & Clinical Conclusions
+In conclusion, TRAILBLAZER-ALZ demonstrates that Donanemab delivers statistically significant and clinically meaningful improvements in primary endpoints with a manageable safety profile in patients with Early Symptomatic Alzheimer's Disease.
