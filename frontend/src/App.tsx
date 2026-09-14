@@ -1,113 +1,134 @@
 import React, { useState, useEffect } from 'react';
-import { Sidebar, NavTab } from './components/Sidebar';
-import { Header } from './components/Header';
-import { DashboardCards } from './components/DashboardCards';
-import { ResearchAssistant } from './components/ResearchAssistant';
-import { DocumentManager } from './components/DocumentManager';
-import { EvaluationView } from './components/EvaluationView';
-import { UsageMonitoring } from './components/UsageMonitoring';
-import { SettingsView } from './components/SettingsView';
-import { fetchDocuments, fetchUsageMetrics } from './services/api';
-import { DocumentItem, UsageReport } from './types';
-import { ShieldCheck, Sparkles, FileText } from 'lucide-react';
+import {
+  Sidebar,
+  NavTab,
+  Header,
+  ResearchAssistant,
+  StudiesView,
+  DocumentManager,
+  DocumentViewer,
+} from './components';
+import { checkHealth } from './services/api';
+
+interface ActiveDocViewerState {
+  documentName: string;
+  initialPage?: number;
+  highlightText?: string;
+  section?: string;
+}
 
 export const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<NavTab>('dashboard');
-  const [documents, setDocuments] = useState<DocumentItem[]>([]);
-  const [usage, setUsage] = useState<UsageReport | null>(null);
+  const [activeTab, setActiveTab] = useState<NavTab>('assistant');
+  const [isHealthy, setIsHealthy] = useState<boolean>(true);
+  const [prefilledStudyId, setPrefilledStudyId] = useState<string>('');
+  const [prefilledDocName, setPrefilledDocName] = useState<string>('');
+  const [activeDocViewer, setActiveDocViewer] = useState<ActiveDocViewerState | null>(null);
 
-  const loadOverviewData = async () => {
-    try {
-      const [docs, u] = await Promise.all([
-        fetchDocuments().catch(() => []),
-        fetchUsageMetrics().catch(() => null),
-      ]);
-      setDocuments(docs);
-      setUsage(u);
-    } catch (err) {
-      console.error('Error loading overview:', err);
-    }
+  const checkHealthStatus = async () => {
+    const healthy = await checkHealth();
+    setIsHealthy(healthy);
   };
 
   useEffect(() => {
-    loadOverviewData();
-  }, [activeTab]);
+    checkHealthStatus();
+    const interval = setInterval(checkHealthStatus, 15000);
+    return () => clearInterval(interval);
+  }, []);
 
   const getPageTitle = (tab: NavTab) => {
+    if (activeDocViewer) {
+      return `Document Viewer · ${activeDocViewer.documentName}`;
+    }
     switch (tab) {
-      case 'dashboard':
-        return 'Clinical Research Intelligence Dashboard';
       case 'assistant':
-        return 'PharmaLens Research Assistant';
+        return 'Research Assistant';
+      case 'studies':
+        return 'Clinical Studies Registry';
       case 'documents':
-        return 'Clinical Documents & Knowledge Base';
-      case 'evaluation':
-        return 'RAG Evaluation & Quality Assurance';
-      case 'monitoring':
-        return 'Usage Analytics & Performance Monitoring';
-      case 'settings':
-        return 'System Configuration';
+        return 'Document Library';
     }
   };
 
-  return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden">
-      {/* Navigation Sidebar */}
-      <Sidebar activeTab={activeTab} onSelectTab={setActiveTab} />
+  const handleOpenDocViewer = (
+    docName: string,
+    page: number = 1,
+    highlightText?: string,
+    section?: string
+  ) => {
+    setActiveDocViewer({
+      documentName: docName,
+      initialPage: page,
+      highlightText,
+      section,
+    });
+  };
 
-      {/* Main Content Area */}
+  const handleTabChange = (tab: NavTab) => {
+    setActiveDocViewer(null);
+    setActiveTab(tab);
+  };
+
+  return (
+    <div className="flex h-screen bg-slate-50 overflow-hidden font-sans antialiased text-slate-900">
+      {/* Primary Sidebar Navigation (Keep exactly: Research Assistant, Studies, Documents) */}
+      <Sidebar activeTab={activeTab} onSelectTab={handleTabChange} />
+
+      {/* Main Container */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <Header title={getPageTitle(activeTab)} />
+        <Header isHealthy={isHealthy} activeTabLabel={getPageTitle(activeTab)} />
 
         <main className="flex-1 overflow-y-auto p-6 space-y-6">
-          {activeTab === 'dashboard' && (
-            <div className="space-y-6">
-              {/* Dashboard Banner */}
-              <div className="p-6 bg-gradient-to-r from-blue-900 via-blue-800 to-slate-900 text-white rounded-2xl shadow-lg relative overflow-hidden">
-                <div className="relative z-10 max-w-2xl space-y-2">
-                  <span className="px-3 py-1 bg-blue-500/30 text-blue-200 border border-blue-400/30 rounded-full text-xs font-semibold uppercase tracking-wider inline-flex items-center gap-1.5">
-                    <ShieldCheck className="w-3.5 h-3.5 text-blue-300" /> Zero-Hallucination Grounded Engine
-                  </span>
-                  <h2 className="text-2xl font-extrabold tracking-tight">
-                    Accelerate Pharmaceutical Discovery with Grounded AI
-                  </h2>
-                  <p className="text-sm text-blue-100/90 leading-relaxed">
-                    Search clinical trial reports, safety bulletins, and drug labels with instant semantic retrieval, traceable source citations, and verified evidence.
-                  </p>
-                  <div className="pt-2 flex gap-3">
-                    <button
-                      onClick={() => setActiveTab('assistant')}
-                      className="px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white font-semibold text-xs rounded-xl shadow-md transition-all flex items-center gap-2"
-                    >
-                      <Sparkles className="w-4 h-4" /> Start Research Question
-                    </button>
-                    <button
-                      onClick={() => setActiveTab('documents')}
-                      className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white font-semibold text-xs rounded-xl transition-all flex items-center gap-2 border border-white/20"
-                    >
-                      <FileText className="w-4 h-4" /> Upload Clinical Document
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Cards Grid */}
-              <DashboardCards
-                documentCount={documents.length}
-                usage={usage}
-                onNavigate={setActiveTab}
+          {activeDocViewer ? (
+            <div className="h-[calc(100vh-7rem)]">
+              <DocumentViewer
+                documentName={activeDocViewer.documentName}
+                initialPage={activeDocViewer.initialPage}
+                highlightText={activeDocViewer.highlightText}
+                section={activeDocViewer.section}
+                onClose={() => setActiveDocViewer(null)}
+                onAskAboutDocument={(docName) => {
+                  setActiveDocViewer(null);
+                  setPrefilledDocName(docName);
+                  setActiveTab('assistant');
+                }}
+                onAskAboutStudy={(studyId) => {
+                  setActiveDocViewer(null);
+                  setPrefilledStudyId(studyId);
+                  setActiveTab('assistant');
+                }}
               />
-
-              {/* Quick Research Query Prompt */}
-              <ResearchAssistant />
             </div>
+          ) : (
+            <>
+              {activeTab === 'assistant' && (
+                <ResearchAssistant
+                  prefilledStudyId={prefilledStudyId}
+                  prefilledDocName={prefilledDocName}
+                  onClearPrefilledStudy={() => setPrefilledStudyId('')}
+                  onClearPrefilledDoc={() => setPrefilledDocName('')}
+                  onOpenDocument={handleOpenDocViewer}
+                />
+              )}
+              {activeTab === 'studies' && (
+                <StudiesView
+                  onAskAboutStudy={(studyId) => {
+                    setPrefilledStudyId(studyId);
+                    setActiveTab('assistant');
+                  }}
+                  onOpenDocument={handleOpenDocViewer}
+                />
+              )}
+              {activeTab === 'documents' && (
+                <DocumentManager
+                  onOpenDocument={handleOpenDocViewer}
+                  onAskAboutStudy={(studyId) => {
+                    setPrefilledStudyId(studyId);
+                    setActiveTab('assistant');
+                  }}
+                />
+              )}
+            </>
           )}
-
-          {activeTab === 'assistant' && <ResearchAssistant />}
-          {activeTab === 'documents' && <DocumentManager />}
-          {activeTab === 'evaluation' && <EvaluationView />}
-          {activeTab === 'monitoring' && <UsageMonitoring />}
-          {activeTab === 'settings' && <SettingsView />}
         </main>
       </div>
     </div>
@@ -115,3 +136,4 @@ export const App: React.FC = () => {
 };
 
 export default App;
+

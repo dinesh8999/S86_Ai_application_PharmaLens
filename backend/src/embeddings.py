@@ -7,8 +7,9 @@ from __future__ import annotations
 
 import logging
 from typing import Any
+# pyrefly: ignore [missing-import]
 from openai import OpenAI
-from backend.src.config import get_settings
+from .config import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -23,12 +24,11 @@ def get_llm_client() -> OpenAI:
         api_key = settings["openai_api_key"]
         base_url = settings["openai_base_url"]
         
-        if not api_key:
-            logger.warning("No API Key configured. Fallback dummy embeddings will be used if API fails.")
-        
         _openai_client = OpenAI(
             api_key=api_key or "dummy-key",
             base_url=base_url,
+            timeout=15.0,
+            max_retries=1,
         )
     return _openai_client
 
@@ -54,7 +54,6 @@ def embed_query(query: str) -> list[float]:
         return _adjust_vector_dimension(vector, target_dim)
     except Exception as err:
         logger.error(f"Embedding API error for query: {err}")
-        # Deterministic fallback vector for offline testing
         return _generate_fallback_vector(query, target_dim)
 
 
@@ -70,9 +69,9 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
     target_dim = settings["vector_dimension"]
     client = get_llm_client()
 
+    import time
     embeddings = []
-    # Process in batches of 16
-    batch_size = 16
+    batch_size = 32
     for i in range(0, len(texts), batch_size):
         batch = texts[i : i + batch_size]
         try:
@@ -83,6 +82,7 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
             for item in response.data:
                 vec = _adjust_vector_dimension(item.embedding, target_dim)
                 embeddings.append(vec)
+            time.sleep(0.7)
         except Exception as err:
             logger.error(f"Batch embedding error: {err}")
             for t in batch:

@@ -11,27 +11,20 @@ import json
 import logging
 import time
 import uuid
-from datetime import datetime, timezone
 from typing import Any
 
-# pyrefly: ignore [missing-import]
-from backend.src.config import get_settings
-# pyrefly: ignore [missing-import]
-from backend.src.embeddings import embed_query
-# pyrefly: ignore [missing-import]
-from backend.src.retrieval import retrieve_context
-# pyrefly: ignore [missing-import]
-from backend.src.citations import (
+from .config import get_settings
+from .embeddings import embed_query
+from .retrieval import retrieve_context
+from .citations import (
     assemble_context,
     build_citation_map,
     generate_cited_answer,
 )
-# pyrefly: ignore [missing-import]
-from backend.src.monitoring import log_request, calculate_cost
+from .monitoring import log_request, calculate_cost
 
 logger = logging.getLogger(__name__)
 
-# Response Cache store: { cache_key: { "created_at": float, "response": dict } }
 _QUERY_CACHE: dict[str, dict[str, Any]] = {}
 
 
@@ -58,7 +51,6 @@ def get_cached_response(cache_key: str) -> dict[str, Any] | None:
             res["usage"]["latency_ms"] = 0.0
             return res
         else:
-            # Expired
             del _QUERY_CACHE[cache_key]
 
     return None
@@ -85,21 +77,6 @@ def answer_with_citations(
 ) -> dict[str, Any]:
     """
     Main RAG pipeline entry point.
-    Returns:
-    {
-        "answer": str,
-        "citations": dict,
-        "sources": list[str],
-        "chunks": list[dict],
-        "usage": {
-            "request_id": str,
-            "cache_hit": bool,
-            "input_tokens": int,
-            "output_tokens": int,
-            "estimated_cost": float,
-            "latency_ms": float
-        }
-    }
     """
     start_time = time.time()
     request_id = f"req-{uuid.uuid4().hex[:8]}"
@@ -129,7 +106,7 @@ def answer_with_citations(
     # 3. Vector Similarity Search
     chunks = retrieve_context(query_vector, k=k, filters=filters)
 
-    # 4. Filter / Quality check: Fallback if no relevant chunks found
+    # 4. Fallback if no relevant chunks found
     if not chunks:
         latency = (time.time() - start_time) * 1000
         res = fallback_response(
@@ -157,7 +134,6 @@ def answer_with_citations(
     # 6. LLM Grounded Generation
     answer, input_tokens, output_tokens = generate_cited_answer(question, context)
 
-    # If LLM response indicates insufficient context, wipe fake citations
     if "don't have enough information" in answer.lower():
         citations = {}
 
@@ -165,9 +141,15 @@ def answer_with_citations(
     cost = calculate_cost(input_tokens, output_tokens)
 
     response = {
+        "question": question,
         "answer": answer,
         "citations": citations,
         "sources": sources,
+        "retrieved_chunks": chunks,
+        "context_chunks": chunks,
+        "used_citations": list(citations.values()) if citations else [],
+        "evidence_strength": "Strong" if citations else "Insufficient",
+        "conflicts_detected": False,
         "chunks": chunks,
         "usage": {
             "request_id": request_id,
@@ -179,7 +161,6 @@ def answer_with_citations(
         },
     }
 
-    # 7. Log & Cache Response
     log_request(
         request_id=request_id,
         question=question,
@@ -196,20 +177,23 @@ def answer_with_citations(
 
 
 def compare_studies(study_id_1: str, study_id_2: str, aspect: str = "safety and efficacy") -> dict[str, Any]:
-    """
-    Perform multi-document comparison query between two clinical trial studies.
-    """
+    """Perform comparison query between two clinical trial studies."""
     question = f"Compare {study_id_1} and {study_id_2} regarding {aspect}."
     return answer_with_citations(question, k=6)
-
 
 
 def fallback_response(answer: str, request_id: str, latency_ms: float, error: str | None = None) -> dict[str, Any]:
     """Generate no-source fallback response structure."""
     return {
+        "question": "",
         "answer": answer,
         "citations": {},
         "sources": [],
+        "retrieved_chunks": [],
+        "context_chunks": [],
+        "used_citations": [],
+        "evidence_strength": "Insufficient",
+        "conflicts_detected": False,
         "chunks": [],
         "usage": {
             "request_id": request_id,

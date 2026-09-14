@@ -7,10 +7,8 @@ from __future__ import annotations
 
 import logging
 from typing import Any
-# pyrefly: ignore [missing-import]
-from backend.src.config import get_settings
-# pyrefly: ignore [missing-import]
-from backend.src.embeddings import get_llm_client
+from .config import get_settings
+from .embeddings import get_llm_client
 
 logger = logging.getLogger(__name__)
 
@@ -98,25 +96,36 @@ def generate_cited_answer(question: str, context: str) -> tuple[str, int, int]:
 
     user_prompt = f"RELEVANT RESEARCH CONTEXT:\n{context}\n\nRESEARCH QUESTION: {question}\n\nGROUNDED ANSWER:"
 
-    try:
-        response = client.chat.completions.create(
-            model=chat_model,
-            messages=[
-                {"role": "system", "content": build_grounded_system_prompt()},
-                {"role": "user", "content": user_prompt},
-            ],
-            temperature=0.1,
-        )
-        answer = response.choices[0].message.content or ""
-        
-        input_tokens = getattr(response.usage, "prompt_tokens", len(user_prompt) // 4)
-        output_tokens = getattr(response.usage, "completion_tokens", len(answer) // 4)
-        
-        return answer.strip(), input_tokens, output_tokens
-    except Exception as err:
-        logger.error(f"LLM Generation error: {err}")
-        return (
-            f"Error generating response from AI model: {err}",
-            0,
-            0,
-        )
+    models_to_try = [chat_model]
+    for fallback in ["gemini-flash-latest", "gemini-pro-latest", "gemini-2.5-flash-lite"]:
+        if fallback not in models_to_try:
+            models_to_try.append(fallback)
+
+    last_err = None
+    for model_name in models_to_try:
+        try:
+            response = client.chat.completions.create(
+                model=model_name,
+                messages=[
+                    {"role": "system", "content": build_grounded_system_prompt()},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.1,
+                timeout=15.0,
+            )
+            answer = response.choices[0].message.content or ""
+            
+            input_tokens = getattr(response.usage, "prompt_tokens", len(user_prompt) // 4)
+            output_tokens = getattr(response.usage, "completion_tokens", len(answer) // 4)
+            
+            return answer.strip(), input_tokens, output_tokens
+        except Exception as err:
+            logger.warning(f"Error calling {model_name}: {err}. Trying next model...")
+            last_err = err
+
+    logger.error(f"All LLM models failed: {last_err}")
+    return (
+        "PharmaLens could not generate the answer. Please try again.",
+        0,
+        0,
+    )

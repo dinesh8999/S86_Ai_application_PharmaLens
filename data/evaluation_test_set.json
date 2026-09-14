@@ -1,72 +1,193 @@
 [
   {
     "id": "eval-001",
-    "question": "What did Study 001 evaluate?",
+    "question": "What were the primary endpoints and progression-free survival results in Study 014?",
+    "expected_study_ids": ["STUDY-014"],
+    "expected_source_documents": ["STUDY_014_Clinical_Trial_Report.txt"],
+    "expected_sections": ["Section 9 - Primary Efficacy Endpoints"],
     "expected_points": [
-      "safety",
-      "efficacy",
-      "Drug X",
-      "adult patients with moderate disease"
-    ],
-    "expected_sources": [
-      "Study_001_Clinical_Report.pdf"
+      "Overall Survival",
+      "Progression-Free Survival",
+      "5.5 months",
+      "2.2 months",
+      "Hazard Ratio 0.58"
     ]
   },
   {
     "id": "eval-002",
-    "question": "What was the primary endpoint in Study 001?",
+    "question": "What common and immune-mediated adverse events were observed with Pembrolizumab in Study 014?",
+    "expected_study_ids": ["STUDY-014"],
+    "expected_source_documents": ["STUDY_014_Clinical_Trial_Report.txt"],
+    "expected_sections": ["Section 8 - Safety & Adverse Events Analysis"],
     "expected_points": [
-      "change in disease severity",
-      "baseline",
-      "twelve weeks"
-    ],
-    "expected_sources": [
-      "Study_001_Clinical_Report.pdf"
+      "Fatigue",
+      "Pruritus",
+      "Immune-mediated pneumonitis",
+      "3.8%",
+      "prednisone"
     ]
   },
   {
     "id": "eval-003",
-    "question": "What adverse events were reported for Drug X?",
+    "question": "How did Study 014 differ from Study 019 in terms of patient population?",
+    "expected_study_ids": ["STUDY-014", "STUDY-019"],
+    "expected_source_documents": ["STUDY_014_Clinical_Trial_Report.txt", "STUDY_019_Clinical_Trial_Report.txt"],
+    "expected_sections": ["Section 1 - Study Overview", "Section 3 - Inclusion & Exclusion Criteria"],
     "expected_points": [
-      "headache",
-      "nausea",
-      "fatigue"
-    ],
-    "expected_sources": [
-      "Study_001_Clinical_Report.pdf"
+      "Study 014 evaluated systemic treatment-naive advanced melanoma patients",
+      "Study 019 evaluated ipilimumab-refractory advanced melanoma patients"
     ]
   },
   {
     "id": "eval-004",
-    "question": "How did Drug Y compare with placebo?",
+    "question": "What primary composite endpoints and retinopathy risks were reported in the SUSTAIN-6 semaglutide trial?",
+    "expected_study_ids": ["SUSTAIN-6"],
+    "expected_source_documents": ["SUSTAIN_6_Clinical_Trial_Report.txt"],
+    "expected_sections": ["Section 8 - Primary Endpoints & Efficacy", "Section 9 - Safety & Retinopathy"],
     "expected_points": [
-      "Drug Y",
-      "placebo",
-      "improvement"
-    ],
-    "expected_sources": [
-      "Study_002_Clinical_Report.pdf"
+      "3-point MACE",
+      "6.6% vs 8.9%",
+      "Diabetic retinopathy complications",
+      "3.0% vs 1.8%",
+      "Hazard Ratio 1.76"
     ]
   },
   {
     "id": "eval-005",
-    "question": "What did the safety analysis of Study 002 find?",
+    "question": "What major bleeding reduction was observed with Rivaroxaban in the EINSTEIN-PE study?",
+    "expected_study_ids": ["EINSTEIN-PE"],
+    "expected_source_documents": ["EINSTEIN_PE_Clinical_Trial_Report.txt"],
+    "expected_sections": ["Section 9 - Bleeding & Safety Results"],
     "expected_points": [
-      "no new major safety signals"
-    ],
-    "expected_sources": [
-      "Study_002_Clinical_Report.pdf"
+      "Major Bleeding 1.1% vs 2.2%",
+      "Hazard Ratio 0.49",
+      "51% reduction"
     ]
   },
   {
     "id": "eval-006",
-    "question": "What safety information is associated with Drug X?",
+    "question": "What is the incidence rate of ARIA-E and ARIA-H in the Donanemab TRAILBLAZER-ALZ trial?",
+    "expected_study_ids": ["TRAILBLAZER-ALZ"],
+    "expected_source_documents": ["TRAILBLAZER_ALZ_Clinical_Trial_Report.txt"],
+    "expected_sections": ["Section 9 - Safety & ARIA"],
     "expected_points": [
-      "adverse event",
-      "Drug X"
+      "ARIA-E occurred in 24.0%",
+      "ARIA-H occurred in 31.4%",
+      "Symptomatic ARIA-E in 6.1%"
+    ]
+  },
+  {
+    "id": "eval-007",
+    "question": "What dosing schedules are recommended in the Keytruda US Package Insert?",
+    "expected_study_ids": ["LABEL-KEYTRUDA"],
+    "expected_source_documents": ["Keytruda_US_Package_Insert.txt"],
+    "expected_sections": ["Section 2 - Dosage and Administration"],
+    "expected_points": [
+      "200 mg every 3 weeks",
+      "400 mg every 6 weeks",
+      "30 minute intravenous infusion"
+    ]
+  },
+  {
+    "id": "eval-008",
+    "question": "What is the Boxed Warning described in the Ozempic prescribing information?",
+    "expected_study_ids": ["LABEL-OZEMPIC"],
+    "expected_source_documents": ["Ozempic_US_Package_Insert.txt"],
+    "expected_sections": ["Section 4 - Boxed Warning & Contraindications"],
+    "expected_points": [
+      "Risk of Thyroid C-Cell Tumors",
+      "Medullary Thyroid Carcinoma",
+      "Multiple Endocrine Neoplasia syndrome type 2"
+    ]
+  },
+  {
+    "id": "eval-009",
+    "question": "What regulatory recommendations did the FDA communicate regarding Pembrolizumab pneumonitis?",
+    "expected_study_ids": ["SAFETY-PEMBRO-01"],
+    "expected_source_documents": ["FDA_Safety_Alert_Pembrolizumab_Pneumonitis.txt"],
+    "expected_sections": ["Section 3 - Regulatory Action & Clinical Recommendations"],
+    "expected_points": [
+      "Withhold for Grade 2 pneumonitis",
+      "Permanently discontinue for Grade 3 or Grade 4",
+      "corticosteroids"
+    ]
+  },
+  {
+    "id": "eval-010",
+    "question": "What safety warnings were issued by the FDA regarding Donanemab ARIA-E and ARIA-H?",
+    "expected_study_ids": ["SAFETY-DONA-03"],
+    "expected_source_documents": ["FDA_Black_Box_Warning_Donanemab_ARIA.txt"],
+    "expected_sections": ["Section 2 - Boxed Warning Details"],
+    "expected_points": [
+      "Amyloid-Related Imaging Abnormalities",
+      "ApoE epsilon4 homozygotes",
+      "Baseline MRI scanning mandated"
+    ]
+  },
+  {
+    "id": "eval-011",
+    "question": "What safety signals were reported across Semaglutide clinical reports, drug labels, and safety advisories?",
+    "expected_study_ids": ["SUSTAIN-6", "LABEL-OZEMPIC", "SAFETY-SEMA-02"],
+    "expected_source_documents": [
+      "SUSTAIN_6_Clinical_Trial_Report.txt",
+      "Ozempic_US_Package_Insert.txt",
+      "EMA_PRAC_Safety_Communication_Semaglutide.txt"
     ],
-    "expected_sources": [
-      "Drug_X_Safety_Bulletin.pdf"
+    "expected_sections": ["Section 9", "Section 4", "Section 2"],
+    "expected_points": [
+      "Diabetic retinopathy complications",
+      "Thyroid C-cell tumors",
+      "Gastrointestinal adverse events",
+      "Pancreatitis monitoring"
+    ]
+  },
+  {
+    "id": "eval-012",
+    "question": "What are the contraindications for Rivaroxaban (Xarelto) in patients undergoing spinal procedures?",
+    "expected_study_ids": ["LABEL-XARELTO"],
+    "expected_source_documents": ["Xarelto_US_Package_Insert.txt"],
+    "expected_sections": ["Section 4 - Boxed Warnings & Bleeding Risk"],
+    "expected_points": [
+      "Epidural or spinal hematomas",
+      "neuraxial anesthesia",
+      "spinal puncture"
+    ]
+  },
+  {
+    "id": "eval-013",
+    "question": "What 5-year overall survival rate was achieved in KEYNOTE-006 for Pembrolizumab vs Ipilimumab?",
+    "expected_study_ids": ["KEYNOTE-006"],
+    "expected_source_documents": ["KEYNOTE_006_Clinical_Trial_Report.txt"],
+    "expected_sections": ["Section 8 - Efficacy Endpoints & 5-Year Survival"],
+    "expected_points": [
+      "38.7% for Q2W",
+      "41.0% for Q3W",
+      "22.5% for Ipilimumab",
+      "Median OS 32.7 months"
+    ]
+  },
+  {
+    "id": "eval-014",
+    "question": "What is the 10-year overall survival rate for Drug Omega in Study 999?",
+    "expected_study_ids": ["STUDY-999"],
+    "expected_source_documents": [],
+    "expected_sections": [],
+    "expected_points": [
+      "insufficient evidence",
+      "not found"
+    ]
+  },
+  {
+    "id": "eval-015",
+    "question": "What overall survival benefit was reported in CHECKMATE-067 for Nivolumab plus Ipilimumab?",
+    "expected_study_ids": ["CHECKMATE-067"],
+    "expected_source_documents": ["CHECKMATE_067_Clinical_Trial_Report.txt"],
+    "expected_sections": ["Section 8 - Efficacy & Long-term Survival Results"],
+    "expected_points": [
+      "72.1 months median OS",
+      "36.9 months for Nivolumab alone",
+      "19.9 months for Ipilimumab alone",
+      "58% ORR"
     ]
   }
 ]

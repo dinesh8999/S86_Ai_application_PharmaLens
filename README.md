@@ -1,133 +1,246 @@
-# PharmaLens – Clinical Research Intelligence Assistant
+# PharmaLens — Clinical Research Intelligence Assistant
 
-**PharmaLens** is a production-grade, AI-powered research intelligence platform designed for pharmaceutical organizations, clinical researchers, team leads, and knowledge base administrators. Built with Retrieval-Augmented Generation (RAG), Qdrant vector database, Google Gemini AI models, FastAPI, and React + TypeScript + Tailwind CSS.
-
----
-
-## 🌟 Key Capabilities & Features
-
-- 🎯 **Grounded AI Answers**: Zero hallucination RAG engine strictly bound to retrieved context.
-- 📌 **Source Citation System**: Inline clickable citations (`[1]`, `[2]`) mapping directly to real document metadata (Source, Study ID, Section, Page, Chunk ID, Similarity Score).
-- 🛡️ **No-Source Fallback**: Returns `"I don't have enough information in the available documents to answer that question."` when context is missing or irrelevant.
-- ⚡ **Query Response Caching**: Hash-based response caching with 900s TTL for zero-latency repeated queries.
-- 📊 **Usage Analytics & Cost Estimation**: Structured JSONL request logging (`outputs/rag_requests.jsonl`) with input/output token tracking and USD cost calculation (`outputs/usage_report.json`).
-- 🔬 **Automated RAG Evaluation**: Scores Correctness, Grounding Ratio, Citation Accuracy, and Overall Quality (`outputs/evaluation_results.json` and `outputs/evaluation_summary.md`).
-- 🏥 **Healthcare UI/UX Aesthetics**: Modern healthcare AI dashboard with responsive navigation, document upload drag-and-drop, evidence inspection drawer, and live API connectivity status.
+**PharmaLens** is an AI-powered, evidence-grounded clinical research assistant designed to answer complex pharmaceutical questions across clinical trial reports, regulatory drug labels, and safety communications with exact page-level citations.
 
 ---
 
-## 📁 Clean Architecture & Folder Structure
+## 1. Product Purpose & Problem Statement
+
+### The Problem
+Pharmaceutical and biotech researchers spend hours manually combing through lengthy clinical study reports, FDA/EMA package inserts, and post-marketing safety alerts to answer specific clinical and regulatory questions. Generic AI chatbots and search engines often hallucinate patient counts, trial endpoints, dosages, or safety signals, and fail to provide exact page-level provenance.
+
+### The Solution
+PharmaLens provides a unified, evidence-first research workflow:
+1. **Clinical Research Question**: Researcher enters a clinical or safety inquiry.
+2. **Semantic Retrieval**: Qdrant vector database retrieves candidate chunks using cosine similarity and optional study/doc-type filters.
+3. **Relevance Threshold Filtering**: Chunks must pass a relevance threshold (>= 0.40) to qualify as `relevant_evidence`. Unrelated candidates are strictly discarded.
+4. **Grounded Generation**: Gemini generates a concise answer strictly grounded in the retrieved evidence.
+5. **Citations & Provenance**: Factual assertions cite sources (`[1]`, `[2]`), mapping directly to document name, study ID, document type, page number, and section header.
+6. **Evidence Inspection**: Clicking any citation opens the Evidence Drawer with full context and source excerpts.
+7. **Zero-Hallucination Fallback**: When no relevant documents exist (or negative queries are tested), the system returns `"No sufficiently relevant evidence was found in the available documents to answer this question."` with zero unrelated candidate chunks displayed.
+
+> [!IMPORTANT]
+> **Research Support Tool Disclaimer**: PharmaLens is an evidence-grounded research support system. Always verify critical clinical, regulatory, or safety findings against the original source documents before making clinical decisions.
+
+---
+
+## 2. Core Primary Navigation
+
+The application focuses on the researcher-first workflow with a streamlined navigation hierarchy:
+
+```
+PharmaLens
+Clinical Research Assistant
+
+├── Research Assistant     # Primary Q&A screen with filters, grounded answers & citations
+├── Studies                # Clinical studies registry with linked documents & "Ask About Study"
+└── Documents              # Knowledge base inventory with real-time page & chunk statistics
+```
+
+- **Top Bar**: Displays `Research Preview`, `Clinical Research Support`, and live `API Connected` status indicator.
+- **Sidebar**: Dark navy sidebar with restrained blue accents and a subtle `Qdrant Active (Evidence-First RAG)` indicator.
+
+---
+
+## 3. Canonical Knowledge Base Corpus
+
+PharmaLens operates over an expanded canonical corpus of **21 substantial documents** comprising **295 pages** and **632 indexed chunks**:
+
+| Document Type | Count | Representative Documents |
+|---|---|---|
+| **Clinical Trial Report** | 13 | `STUDY-001`, `STUDY-002`, `STUDY-003`, `CHECKMATE-067`, `DAPA-HF`, `EINSTEIN-PE`, `EMPEROR-REDUCED`, `KEYNOTE-006`, `MONALEESA-2`, `STUDY-014`, `STUDY-019`, `SUSTAIN-6`, `TRAILBLAZER-ALZ` |
+| **Drug Label** | 4 | `Keytruda_US_Package_Insert.txt`, `Kisunla_US_Package_Insert.txt`, `Ozempic_US_Package_Insert.txt`, `Xarelto_US_Package_Insert.txt` |
+| **Safety Bulletin** | 4 | `Drug_X_Safety_Bulletin.txt`, `EMA_PRAC_Safety_Communication_Semaglutide.txt`, `FDA_Black_Box_Warning_Donanemab_ARIA.txt`, `FDA_Safety_Alert_Pembrolizumab_Pneumonitis.txt` |
+
+### Document Type Normalization
+All documents are categorized into one of three normalized document types:
+- `Clinical Trial Report` (`clinical_trial_report`)
+- `Drug Label` (`drug_label`)
+- `Safety Bulletin` (`safety_bulletin`)
+
+---
+
+## 4. Grounded RAG Architecture
+
+```
+                                  USER QUERY
+                                      │
+                                      ▼
+                             Gemini Embedding
+                           (3072-dim Vector)
+                                      │
+                                      ▼
+                           Qdrant Similarity Search
+                        (Cosine Distance Metric)
+                                      │
+                                      ▼
+                        Candidate Retrieval (Top-K)
+                                      │
+                                      ▼
+                        Relevance Threshold (>= 0.40)
+                       ┌──────────────┴──────────────┐
+                       ▼                             ▼
+               Score < 0.40                   Score >= 0.40
+            (Zero Evidence)                 (Relevant Evidence)
+                   │                                 │
+                   ▼                                 ▼
+      "No sufficiently relevant              Context Assembly
+        evidence was found..."               & Citation Map
+                   │                                 │
+                   ▼                                 ▼
+         Evidence Strength:                  Grounded LLM Prompt
+            Insufficient                             │
+                   │                                 ▼
+         Chunks Displayed: 0              Clinical Evidence Answer
+                                          with Citations [1], [2]
+```
+
+### Distinction of Internal Evidence Concepts
+- `retrieved_candidates`: Raw similarity search matches from Qdrant.
+- `relevant_evidence`: Filtered chunks exceeding the relevance score threshold (>= 0.40).
+- `context_chunks`: Chunks passed into the LLM system prompt.
+- `used_citations`: Explicit citations referenced in the final generated answer text.
+
+---
+
+## 5. Technology Stack
+
+- **Backend**: Python 3.10+, FastAPI, Pydantic v2, Uvicorn, OpenAI Python SDK (Google Gemini compatibility layer)
+- **Vector Database**: Qdrant (`rag_chunks` collection, 3072-dimensional vectors, local persistent storage fallback)
+- **AI Model**: Google Gemini (`gemini-3.6-flash` via OpenAI compatibility endpoint)
+- **Frontend**: React 18, TypeScript, Tailwind CSS, Lucide Icons, Vite
+- **Testing**: Python unittest, FastAPI TestClient, Vitest / Vite build
+
+---
+
+## 6. Repository Structure
 
 ```
 S86_Ai_application_PharmaLens/
 ├── backend/
-│   ├── src/
-│   │   ├── config.py             # Settings & path resolution
-│   │   ├── ingestion.py          # Document parsing, chunking, payload builder & Qdrant indexing
-│   │   ├── embeddings.py         # Embedding generation & vector dimension matching
-│   │   ├── retrieval.py          # Qdrant client, vector similarity search & metadata filtering
-│   │   ├── rag_pipeline.py       # Core RAG pipeline with query caching & fallback
-│   │   ├── citations.py          # Context assembly & grounded prompt builder with citations ([1], [2])
-│   │   ├── evaluation.py         # Correctness, Grounding, Citation Accuracy & Overall scoring
-│   │   ├── monitoring.py         # Request logging, token/cost estimation & usage reports
-│   │   └── api.py                # FastAPI REST API
-│   ├── outputs/
-│   │   ├── evaluation_results.json
-│   │   ├── evaluation_summary.md
-│   │   ├── usage_report.json
-│   │   └── rag_requests.jsonl
-│   ├── uploads/                  # Ingested clinical research files
-│   ├── data/
-│   │   └── sample_corpus/        # Built-in sample clinical reports & bulletins
-│   ├── .env                      # API keys & model configuration
-│   ├── requirements.txt          # Python dependencies
-│   └── Dockerfile
+│   ├── app/
+│   │   ├── main.py                  # FastAPI entrypoint with CORS & route registration
+│   │   ├── api/                     # REST route controllers
+│   │   │   ├── query.py             # /api/query & /api/compare endpoints
+│   │   │   ├── documents.py         # /api/documents & /api/documents/upload
+│   │   │   ├── studies.py           # /api/studies & /api/studies/{study_id}
+│   │   │   └── health.py            # /api/health endpoint
+│   │   ├── services/                # Modular backend service layer
+│   │   │   ├── retrieval_service.py # Qdrant search & metadata filtering
+│   │   │   ├── embedding_service.py # Gemini embedding generator
+│   │   │   ├── citation_service.py  # Context assembly & citation extraction
+│   │   │   ├── document_service.py  # Multi-page parsing & corpus metrics
+│   │   │   ├── study_service.py     # Canonical study grouping & profiles
+│   │   │   └── evaluation_service.py# Evaluation dataset runner
+│   │   └── core/
+│   │       └── config.py            # Application configuration
+│   ├── scripts/
+│   │   ├── ingest_corpus.py         # Multi-page corpus ingestion script
+│   │   ├── clean_qdrant_corpus.py   # Corpus deduplication & cleanup script
+│   │   ├── link_canonical_studies.py# Study linkage script
+│   │   └── verify_rag_suite.py      # Automated 18-scenario RAG test suite
+│   ├── src/                         # Core utility implementations
+│   │   ├── citations.py             # Grounded prompt construction
+│   │   ├── embeddings.py            # Gemini client & embedding calls
+│   │   └── retrieval.py             # Qdrant client connection & query
+│   └── requirements.txt             # Python backend dependencies
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── Sidebar.tsx       # Navigation bar
-│   │   │   ├── Header.tsx        # Top header & connectivity status
-│   │   │   ├── DashboardCards.tsx# Key performance widgets
-│   │   │   ├── ResearchAssistant.tsx # Q&A interface with interactive citations & evidence panel
-│   │   │   ├── CitationViewer.tsx# Source citation inspection modal
-│   │   │   ├── DocumentManager.tsx # Document uploader & chunk browser
-│   │   │   ├── EvaluationView.tsx# Grounding, Correctness & Citation Accuracy dashboard
-│   │   │   ├── UsageMonitoring.tsx # Token, cost, latency & request log analytics
-│   │   │   └── SettingsView.tsx  # System status & configuration settings
-│   │   ├── services/
-│   │   │   └── api.ts            # Frontend REST client
-│   │   ├── types/
-│   │   │   └── index.ts          # TypeScript type definitions
-│   │   ├── App.tsx
-│   │   ├── main.tsx
-│   │   └── index.css             # Tailwind CSS & healthcare styling
-│   ├── package.json
-│   ├── vite.config.ts
-│   ├── tailwind.config.js
-│   └── Dockerfile
-├── docker-compose.yml             # Orchestration for Backend, Frontend, and Qdrant
-└── README.md                      # Documentation
+│   │   │   ├── Sidebar.tsx          # 3-item navigation (Assistant, Studies, Documents)
+│   │   │   ├── Header.tsx           # Status header with Research Preview badge
+│   │   │   ├── ResearchAssistant.tsx# Main query interface & Supporting Evidence
+│   │   │   ├── StudiesView.tsx      # Clinical studies registry cards
+│   │   │   ├── DocumentManager.tsx  # Knowledge base documents table & metrics
+│   │   │   └── EvidenceDrawer.tsx   # Slide-out source document inspector
+│   │   ├── services/api.ts          # Frontend API client
+│   │   ├── types/index.ts           # TypeScript interfaces
+│   │   ├── App.tsx                  # Main layout container
+│   │   └── index.css                # Styling & tokens
+│   └── package.json
+├── data/
+│   ├── expanded_corpus/             # Canonical 21 multi-page clinical documents
+│   │   ├── clinical_reports/        # 13 clinical trial reports
+│   │   ├── drug_labels/             # 4 drug package inserts
+│   │   └── safety_bulletins/        # 4 safety alerts & communications
+│   └── evaluation_test_set.json     # Benchmark evaluation questions
+└── README.md                        # Documentation
 ```
 
 ---
 
-## 🚀 Quick Start Guide
+## 7. Setup & Running Instructions
 
-### 1. Backend Setup
+### Prerequisites
+- Python 3.10+
+- Node.js 18+ and npm
+- Valid Google Gemini API Key
 
-```bash
-# Navigate to backend directory
-cd backend
+### Backend Setup
+1. Activate virtual environment:
+   ```powershell
+   .\.venv\Scripts\activate
+   ```
+2. Configure `.env` in project root:
+   ```env
+   OPENAI_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/
+   OPENAI_API_KEY=your_gemini_api_key_here
+   CHAT_MODEL=gemini-3.6-flash
+   EMBED_MODEL=gemini-embedding-001
+   QDRANT_URL=http://localhost:6333
+   QDRANT_COLLECTION=rag_chunks
+   VECTOR_DIMENSION=3072
+   ```
+3. Start the FastAPI backend:
+   ```powershell
+   .\.venv\Scripts\python.exe -m uvicorn backend.app.main:app --reload --port 8000
+   ```
+   *Interactive API docs available at: `http://localhost:8000/docs`*
 
-# Install dependencies (virtual environment recommended)
-pip install -r requirements.txt
-
-# Run FastAPI backend server
-python -m backend.src.api
-```
-Backend API will run on `http://localhost:8000`.
-
-### 2. Frontend Setup
-
-```bash
-# Navigate to frontend directory
-cd frontend
-
-# Install Node dependencies
-npm install
-
-# Launch Vite development server
-npm run dev
-```
-Frontend Web UI will run on `http://localhost:3000`.
-
-### 3. Docker Compose Deployment
-
-To launch all services (Qdrant, Backend, Frontend) with Docker:
-
-```bash
-docker-compose up --build
-```
+### Frontend Setup
+1. Navigate to the `frontend/` directory:
+   ```powershell
+   cd frontend
+   npm install
+   ```
+2. Start the Vite development server:
+   ```powershell
+   npm run dev
+   ```
+   *Access the web application at: `http://localhost:3000`*
 
 ---
 
-## 🔌 API Reference Endpoints
+## 8. API Specification
 
 | Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/api/query` | Submit natural language research question (`question`, `k`, `filters`) |
-| `POST` | `/api/documents/upload` | Upload & index clinical research file (`file`, `study_id`) |
-| `GET` | `/api/documents` | List indexed documents with chunk count & status |
-| `GET` | `/api/usage` | Retrieve aggregate RAG usage report & cost metrics |
-| `GET` | `/api/evaluation` | Get evaluation benchmark results |
-| `POST` | `/api/evaluation/run` | Run automated RAG evaluation suite |
-| `GET` | `/api/health` | Backend & Qdrant connectivity health check |
+|---|---|---|
+| `GET` | `/api/health` | Service health status & component check |
+| `POST` | `/api/query` | Grounded RAG query with `top_k`, `study_id`, `document_type` filters |
+| `POST` | `/api/compare` | Compare two studies across clinical aspects |
+| `GET` | `/api/documents` | List indexed documents with page and chunk counts |
+| `POST` | `/api/documents/upload` | Ingest user-uploaded clinical document |
+| `GET` | `/api/studies` | List canonical clinical study profiles |
+| `GET` | `/api/studies/{study_id}` | Detailed study overview, endpoints, and linked documents |
 
 ---
 
-## 🧪 RAG Safety Rules & Verification
+## 9. Verification & Quality Testing
 
-1. **Context-Only Grounding**: The LLM system prompt mandates answering *only* using retrieved document context.
-2. **Citation Verification**: Every factual assertion contains citation markers (`[1]`, `[2]`) pointing back to inspectable vector payloads.
-3. **No Fake Citations**: Citations are generated exclusively for real retrieved chunks. If context is insufficient, citations are cleared and fallback response is served.
-4. **Deterministic Fallback**: In the absence of supported evidence, returns `"I don't have enough information in the available documents to answer that question."`
+To execute the automated 18-scenario RAG quality test suite covering answerable queries, no-evidence negative controls, study-filtered queries, and multi-document synthesis:
+
+```powershell
+.\.venv\Scripts\python.exe -m backend.scripts.verify_rag_suite
+```
+
+To build and type-check the frontend production bundle:
+```powershell
+cd frontend
+npm run build
+```
+
+---
+
+## 10. Research Safety Disclaimer
+
+*PharmaLens is an evidence-grounded research support system. Always verify critical clinical, regulatory, or safety findings against the original source documents.*

@@ -1,0 +1,42 @@
+Document ID: DOC-SB-EMA-002
+Study ID: SAFETY-SEMA-02
+Document Type: safety_bulletin
+Sponsor: European Medicines Agency (EMA)
+Phase: Post-Marketing
+Drug: Semaglutide
+Synthetic Demo Document: false
+
+--- Page 1 ---
+## 1. Executive Safety Advisory & Issue Summary
+Document ID: DOC-SB-EMA-002 | Organization: European Medicines Agency (EMA)
+Title: EMA PRAC Safety Advisory: Diabetic Retinopathy Complications Assessment for Semaglutide
+Affected Medicine: Semaglutide
+EMA PRAC completed signal review on diabetic retinopathy events observed in SUSTAIN-6 (3.0% vs 1.8%, HR = 1.76). Rapid initial HbA1c reduction in patients with baseline retinopathy increases risk.
+
+--- Page 2 ---
+## 2. Pharmacovigilance Risk Evaluation & Signal Analysis
+Post-marketing surveillance data, EudraVigilance database queries, and spontaneous MedWatch event filings revealed adverse signal patterns requiring updated guidance.
+
+--- Page 3 ---
+## 3. Recommended Clinical Actions for Healthcare Providers
+Perform baseline ophthalmological evaluation prior to semaglutide escalation in diabetic patients with established retinopathy.
+
+--- Page 4 ---
+## 4. Reporting Adverse Events & Patient Communications
+Healthcare professionals and patients are encouraged to report adverse events or quality problems to FDA MedWatch or national competent authorities.
+
+--- Page 5 ---
+## 5. Reporting Adverse Events & Patient Communications
+Healthcare professionals and patients are encouraged to report adverse events or quality problems to FDA MedWatch or national competent authorities.
+
+--- Page 6 ---
+## 6. Reporting Adverse Events & Patient Communications
+Healthcare professionals and patients are encouraged to report adverse events or quality problems to FDA MedWatch or national competent authorities.
+
+--- Page 7 ---
+## 7. Reporting Adverse Events & Patient Communications
+Healthcare professionals and patients are encouraged to report adverse events or quality problems to FDA MedWatch or national competent authorities.
+
+--- Page 8 ---
+## 8. Reporting Adverse Events & Patient Communications
+Healthcare professionals and patients are encouraged to report adverse events or quality problems to FDA MedWatch or national competent authorities.

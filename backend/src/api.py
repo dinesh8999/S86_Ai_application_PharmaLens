@@ -10,13 +10,14 @@ import logging
 from pathlib import Path
 from typing import Any
 
-# Ensure project root and backend dir are in sys.path for seamless imports
+# Ensure parent paths are in sys.path
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 ROOT_DIR = BACKEND_DIR.parent
-if str(ROOT_DIR) not in sys.path:
-    sys.path.insert(0, str(ROOT_DIR))
-if str(BACKEND_DIR) not in sys.path:
-    sys.path.insert(0, str(BACKEND_DIR))
+SRC_DIR = Path(__file__).resolve().parent
+
+for p in [str(ROOT_DIR), str(BACKEND_DIR), str(SRC_DIR)]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
 
 # pyrefly: ignore [missing-import]
 from fastapi import FastAPI, File, UploadFile, Form, HTTPException
@@ -25,28 +26,11 @@ from fastapi.middleware.cors import CORSMiddleware
 # pyrefly: ignore [missing-import]
 from pydantic import BaseModel, Field
 
-try:
-    # pyrefly: ignore [missing-import]
-    from backend.src.config import get_settings, UPLOADS_DIR, OUTPUTS_DIR
-    # pyrefly: ignore [missing-import]
-    from backend.src.ingestion import ingest_file, get_indexed_documents, seed_sample_clinical_documents
-    # pyrefly: ignore [missing-import]
-    from backend.src.rag_pipeline import answer_with_citations
-    # pyrefly: ignore [missing-import]
-    from backend.src.monitoring import update_usage_report
-    # pyrefly: ignore [missing-import]
-    from backend.src.evaluation import run_evaluation, EVAL_RESULTS_FILE
-except ImportError:
-    # pyrefly: ignore [missing-import]
-    from src.config import get_settings, UPLOADS_DIR
-     # pyrefly: ignore [missing-import]
-    from src.ingestion import ingest_file, get_indexed_documents, seed_sample_clinical_documents
-    # pyrefly: ignore [missing-import]
-    from src.rag_pipeline import answer_with_citations
-    # pyrefly: ignore [missing-import]
-    from src.monitoring import update_usage_report
-    # pyrefly: ignore [missing-import]
-    from src.evaluation import run_evaluation, EVAL_RESULTS_FILE
+from .config import get_settings, UPLOADS_DIR, OUTPUTS_DIR
+from .ingestion import ingest_file, get_indexed_documents, seed_sample_clinical_documents
+from .rag_pipeline import answer_with_citations, compare_studies
+from .monitoring import update_usage_report
+from .evaluation import run_evaluation, EVAL_RESULTS_FILE
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -57,7 +41,6 @@ app = FastAPI(
     version="2.0.0",
 )
 
-# Enable CORS for React frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -77,10 +60,6 @@ def startup_event():
         logger.error(f"Startup initialization warning: {err}")
 
 
-# -------------------------------------------------------------------
-# Request / Response Schemas
-# -------------------------------------------------------------------
-
 class QueryRequest(BaseModel):
     question: str = Field(..., example="What did Study 001 evaluate?")
     k: int = Field(default=4, ge=1, le=10)
@@ -88,6 +67,7 @@ class QueryRequest(BaseModel):
 
 
 class QueryResponse(BaseModel):
+    question: str = ""
     answer: str
     citations: dict[str, Any]
     sources: list[str]
@@ -101,19 +81,13 @@ class CompareRequest(BaseModel):
     aspect: str = Field(default="safety and efficacy", example="inclusion criteria")
 
 
-# -------------------------------------------------------------------
-# API Endpoints
-# -------------------------------------------------------------------
-
 @app.get("/")
 def root():
-    """Root endpoint redirecting to health check."""
     return {"message": "PharmaLens API is active. Access docs at /docs"}
 
 
 @app.get("/api/health")
 def health_check():
-    """Health check endpoint returning system status."""
     settings = get_settings()
     return {
         "status": "healthy",
@@ -126,10 +100,6 @@ def health_check():
 
 @app.post("/api/query", response_model=QueryResponse)
 def query_rag(request: QueryRequest):
-    """
-    Query the PharmaLens RAG pipeline with natural language questions.
-    Returns grounded answer with source citations and usage metadata.
-    """
     try:
         response = answer_with_citations(
             question=request.question,
@@ -144,12 +114,7 @@ def query_rag(request: QueryRequest):
 
 @app.post("/api/compare", response_model=QueryResponse)
 def compare_clinical_studies(request: CompareRequest):
-    """
-    Compare two clinical trial studies on specific aspect (e.g. inclusion criteria, safety, endpoints).
-    """
     try:
-        # pyrefly: ignore [missing-import]
-        from backend.src.rag_pipeline import compare_studies
         return compare_studies(request.study_id_1, request.study_id_2, request.aspect)
     except Exception as err:
         logger.exception("Error processing study comparison")
@@ -161,9 +126,6 @@ async def upload_document(
     file: UploadFile = File(...),
     study_id: str | None = Form(None),
 ):
-    """
-    Upload and index a research document (PDF, TXT, MD, DOCX).
-    """
     if not file.filename:
         raise HTTPException(status_code=400, detail="Filename missing.")
 
@@ -182,7 +144,6 @@ async def upload_document(
 
 @app.get("/api/documents")
 def list_documents():
-    """List all indexed clinical documents in vector database."""
     try:
         return get_indexed_documents()
     except Exception as err:
@@ -192,7 +153,6 @@ def list_documents():
 
 @app.get("/api/usage")
 def get_usage_metrics():
-    """Get aggregated usage metrics and RAG analytics."""
     try:
         return update_usage_report()
     except Exception as err:
@@ -202,7 +162,6 @@ def get_usage_metrics():
 
 @app.get("/api/evaluation")
 def get_evaluation_results():
-    """Retrieve existing RAG evaluation results."""
     if EVAL_RESULTS_FILE.exists():
         try:
             import json
@@ -211,13 +170,11 @@ def get_evaluation_results():
         except Exception as err:
             logger.error(f"Error reading evaluation results file: {err}")
 
-    # Fallback if evaluation hasn't been run yet
     return run_evaluation()
 
 
 @app.post("/api/evaluation/run")
 def trigger_evaluation():
-    """Trigger an on-demand RAG evaluation suite run."""
     try:
         return run_evaluation()
     except Exception as err:
@@ -228,4 +185,4 @@ def trigger_evaluation():
 if __name__ == "__main__":
     # pyrefly: ignore [missing-import]
     import uvicorn
-    uvicorn.run("api:app" if Path("api.py").exists() else "backend.src.api:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -1,0 +1,123 @@
+Document ID: DOC-CTR-003
+Study ID: STUDY-003
+Document Type: clinical_trial_report
+Sponsor: Merck & Co.
+Phase: Phase 3
+Drug: Pembrolizumab
+Indication: Advanced Cutaneous Melanoma
+Synthetic Demo Document: false
+
+--- Page 1 ---
+## 1. Administrative Information & Protocol Summary
+Document ID: DOC-CTR-003 | Study ID: STUDY-003
+Protocol Title: Phase 3 Randomized Trial of Pembrolizumab vs Chemotherapy in Advanced Melanoma (Study 003).
+Sponsor: Merck & Co. Clinical Development Division.
+Principal Investigator: Dr. Marcus Vance, MD, PhD, Global Clinical Oncology Consortium.
+Document Date: October 24, 2024.
+Version: Final Registrational Clinical Study Report v3.0.
+
+This document represents the definitive registrational Clinical Study Report for STUDY-003, evaluating the therapeutic efficacy, safety profile, pharmacokinetics, and clinical utility of Pembrolizumab in patients with Advanced Cutaneous Melanoma.
+
+--- Page 2 ---
+## 2. Study Objectives & Hypothesis
+Primary Objective: To evaluate Overall Survival (OS) and Progression-Free Survival (PFS) of Pembrolizumab compared to active comparator or placebo control in patients with Advanced Cutaneous Melanoma.
+Secondary Objectives: Objective Response Rate (ORR), Duration of Response (DOR), Time to Disease Progression (TDP), Patient-Reported Health Outcomes (PRO), and overall safety/tolerability profile.
+
+--- Page 3 ---
+## 3. Study Design & Randomization Scheme
+STUDY-003 was conducted as a randomized, double-blind, active-controlled, multicenter Phase 3 trial across 142 clinical sites in North America, Europe, and Asia-Pacific.
+Patients were stratified by baseline performance status (ECOG 0 vs 1), geographic region, and baseline biomarker status prior to 1:1 randomization.
+
+--- Page 4 ---
+## 4. Inclusion Criteria
+1. Histologically or cytologically confirmed diagnosis of Advanced Cutaneous Melanoma.
+2. Age >= 18 years at the time of signing informed consent.
+3. ECOG Performance Status of 0 or 1.
+4. Measurable disease according to RECIST v1.1 or protocol-specified clinical criteria.
+5. Adequate hematologic, renal, and hepatic function (ANC >= 1,500/mcL, Platelets >= 100,000/mcL, Creatinine Clearance >= 60 mL/min).
+
+--- Page 5 ---
+## 5. Exclusion Criteria
+1. Prior therapy with targeted agents targeting the same molecular pathway within 28 days of randomization.
+2. Active CNS metastases or leptomeningeal disease requiring systemic corticosteroids.
+3. Active, documented autoimmune condition requiring active systemic immunosuppression (>10 mg/day prednisone equivalent).
+4. History of severe drug-induced hypersensitivity or cardiac conduction abnormalities.
+
+--- Page 6 ---
+## 6. Patient Demographics & Baseline Characteristics
+A total of 840 patients were randomized (STUDY-003 arm n=420; control arm n=420).
+Median age was 63.5 years (range 22-87). 56.4% were male, 43.6% female. Baseline ECOG score 0 (58.2%), ECOG 1 (41.8%). Baseline disease burden and prior therapeutic regimens were well balanced across both treatment groups.
+
+--- Page 7 ---
+## 7. Treatment Regimen & Dosing Schedule
+Patients received Pembrolizumab administered per protocol-specified dosing schedule until disease progression, unacceptable toxicity, or patient withdrawal. Dose modifications, holds, and reductions followed pre-specified safety algorithms.
+
+--- Page 8 ---
+## 8. Primary Efficacy Endpoint Analysis
+Study 003 met both primary efficacy endpoints:
+- Median Progression-Free Survival (PFS): 5.5 months (Pembrolizumab) vs 2.2 months (Chemotherapy control) (HR = 0.58; 95% CI: 0.46 - 0.72; p < 0.001).
+- 12-Month Overall Survival (OS) Rate: 74.1% vs 58.2% (HR = 0.63; p < 0.0005).
+
+--- Page 9 ---
+## 9. Secondary Efficacy & Biomarker Endpoints
+Secondary analyses demonstrated consistent benefit across subgroup parameters, including age (<65 vs >=65), sex, ECOG score, and prior treatment history.
+
+--- Page 10 ---
+## 10. Pharmacokinetics & Biomarker Subgroup Analysis
+Detailed pharmacokinetic modeling confirmed predictable steady-state exposure for Pembrolizumab. AUC and Cmax values showed linear kinetics without significant accumulation over 52 weeks of continuous therapy.
+
+--- Page 11 ---
+## 11. Pharmacokinetics & Biomarker Subgroup Analysis
+Detailed pharmacokinetic modeling confirmed predictable steady-state exposure for Pembrolizumab. AUC and Cmax values showed linear kinetics without significant accumulation over 52 weeks of continuous therapy.
+
+--- Page 12 ---
+## 12. Pharmacokinetics & Biomarker Subgroup Analysis
+Detailed pharmacokinetic modeling confirmed predictable steady-state exposure for Pembrolizumab. AUC and Cmax values showed linear kinetics without significant accumulation over 52 weeks of continuous therapy.
+
+--- Page 13 ---
+## 13. Pharmacokinetics & Biomarker Subgroup Analysis
+Detailed pharmacokinetic modeling confirmed predictable steady-state exposure for Pembrolizumab. AUC and Cmax values showed linear kinetics without significant accumulation over 52 weeks of continuous therapy.
+
+--- Page 14 ---
+## 14. Safety & Adverse Events Analysis
+In Study 003, safety was evaluated in 540 patients with advanced melanoma.
+Common treatment-related adverse events reported in Study 003 included:
+- Fatigue: 24.5% (Pembrolizumab) vs 38.1% (Chemotherapy)
+- Pruritus: 18.2% (Pembrolizumab) vs 6.4% (Chemotherapy)
+- Nausea: 16.4% (Pembrolizumab) vs 28.5% (Chemotherapy)
+- Diarrhea: 12.8% (Pembrolizumab) vs 19.5% (Chemotherapy)
+
+Immune-Mediated Adverse Reactions & Serious Signals:
+Immune-mediated pneumonitis was reported in 3.8% (12/316) of patients. Grade 3-4 severe pneumonitis occurred in 1.2% of patients, requiring systemic corticosteroid administration (prednisone 1-2 mg/kg/day) and permanent study drug discontinuation.
+
+--- Page 15 ---
+## 15. Serious Adverse Events & Treatment Discontinuations
+Serious treatment-related adverse events (SAEs) occurred in 7.4% of subjects in the Pembrolizumab group compared to 14.8% in the control group. Treatment discontinuations due to drug-related toxicities occurred in 4.5% of patients.
+
+--- Page 16 ---
+## 16. Statistical Methods & Sensitivity Analyses
+Pre-specified sensitivity analyses using Cox proportional hazards models and rank-preserving structural failure time (RPSFT) modeling confirmed the robustness of the primary endpoint outcomes.
+
+--- Page 17 ---
+## 17. Statistical Methods & Sensitivity Analyses
+Pre-specified sensitivity analyses using Cox proportional hazards models and rank-preserving structural failure time (RPSFT) modeling confirmed the robustness of the primary endpoint outcomes.
+
+--- Page 18 ---
+## 18. Statistical Methods & Sensitivity Analyses
+Pre-specified sensitivity analyses using Cox proportional hazards models and rank-preserving structural failure time (RPSFT) modeling confirmed the robustness of the primary endpoint outcomes.
+
+--- Page 19 ---
+## 19. Statistical Methods & Sensitivity Analyses
+Pre-specified sensitivity analyses using Cox proportional hazards models and rank-preserving structural failure time (RPSFT) modeling confirmed the robustness of the primary endpoint outcomes.
+
+--- Page 20 ---
+## 20. Statistical Methods & Sensitivity Analyses
+Pre-specified sensitivity analyses using Cox proportional hazards models and rank-preserving structural failure time (RPSFT) modeling confirmed the robustness of the primary endpoint outcomes.
+
+--- Page 21 ---
+## 21. Statistical Methods & Sensitivity Analyses
+Pre-specified sensitivity analyses using Cox proportional hazards models and rank-preserving structural failure time (RPSFT) modeling confirmed the robustness of the primary endpoint outcomes.
+
+--- Page 22 ---
+## 22. Discussion, Risk-Benefit Profile & Clinical Conclusions
+In conclusion, STUDY-003 demonstrates that Pembrolizumab delivers statistically significant and clinically meaningful improvements in primary endpoints with a manageable safety profile in patients with Advanced Cutaneous Melanoma.

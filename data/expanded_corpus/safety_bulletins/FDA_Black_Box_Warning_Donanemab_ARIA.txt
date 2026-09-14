@@ -1,0 +1,42 @@
+Document ID: DOC-SB-FDA-003
+Study ID: SAFETY-DONA-03
+Document Type: safety_bulletin
+Sponsor: FDA MedWatch
+Phase: Post-Marketing
+Drug: Donanemab
+Synthetic Demo Document: false
+
+--- Page 1 ---
+## 1. Executive Safety Advisory & Issue Summary
+Document ID: DOC-SB-FDA-003 | Organization: FDA MedWatch
+Title: FDA Safety Alert: Boxed Warning and REMS Protocol for ARIA-E and ARIA-H with Donanemab
+Affected Medicine: Donanemab
+FDA mandates Boxed Warning detailing risk of Amyloid-Related Imaging Abnormalities (ARIA-E edema 24%, ARIA-H microhemorrhage 31.4%) associated with anti-amyloid therapy.
+
+--- Page 2 ---
+## 2. Pharmacovigilance Risk Evaluation & Signal Analysis
+Post-marketing surveillance data, EudraVigilance database queries, and spontaneous MedWatch event filings revealed adverse signal patterns requiring updated guidance.
+
+--- Page 3 ---
+## 3. Recommended Clinical Actions for Healthcare Providers
+Mandatory baseline brain MRI and genetic ApoE testing prior to initiating treatment. Follow MRI monitoring schedule prior to 2nd, 3rd, 4th, and 7th infusions.
+
+--- Page 4 ---
+## 4. Reporting Adverse Events & Patient Communications
+Healthcare professionals and patients are encouraged to report adverse events or quality problems to FDA MedWatch or national competent authorities.
+
+--- Page 5 ---
+## 5. Reporting Adverse Events & Patient Communications
+Healthcare professionals and patients are encouraged to report adverse events or quality problems to FDA MedWatch or national competent authorities.
+
+--- Page 6 ---
+## 6. Reporting Adverse Events & Patient Communications
+Healthcare professionals and patients are encouraged to report adverse events or quality problems to FDA MedWatch or national competent authorities.
+
+--- Page 7 ---
+## 7. Reporting Adverse Events & Patient Communications
+Healthcare professionals and patients are encouraged to report adverse events or quality problems to FDA MedWatch or national competent authorities.
+
+--- Page 8 ---
+## 8. Reporting Adverse Events & Patient Communications
+Healthcare professionals and patients are encouraged to report adverse events or quality problems to FDA MedWatch or national competent authorities.
