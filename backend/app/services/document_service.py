@@ -144,7 +144,15 @@ def scan_documents_from_disk() -> list[dict[str, Any]]:
 
 
 def get_all_documents() -> list[dict[str, Any]]:
-    """Retrieve full indexed document library with page numbers, section info, and study linkage."""
+    """
+    Retrieve full indexed document library with page numbers, section info, and study linkage.
+    Always combines pre-existing base corpus documents with all uploaded and Qdrant-indexed files.
+    """
+    # 1. Start with all base corpus files on disk + previous uploads in UPLOADS_DIR
+    disk_docs = scan_documents_from_disk()
+    docs_map: dict[str, dict[str, Any]] = {d["document_name"]: d for d in disk_docs}
+
+    # 2. Scroll Qdrant records to enrich or merge newly indexed documents
     try:
         col_name = ensure_collection_exists()
         client = get_qdrant_client()
@@ -157,7 +165,7 @@ def get_all_documents() -> list[dict[str, Any]]:
         )
 
         if records:
-            docs_map: dict[str, dict[str, Any]] = {}
+            qdrant_docs_map: dict[str, dict[str, Any]] = {}
 
             for r in records:
                 payload = r.payload or {}
@@ -171,8 +179,8 @@ def get_all_documents() -> list[dict[str, Any]]:
                 page = meta.get("page", 1)
                 synthetic = meta.get("synthetic_demo_document", False)
 
-                if doc_name not in docs_map:
-                    docs_map[doc_name] = {
+                if doc_name not in qdrant_docs_map:
+                    qdrant_docs_map[doc_name] = {
                         "document_id": meta.get("document_id") or f"DOC-{hash(doc_name) & 0xffff}",
                         "document_name": doc_name,
                         "study_id": study_id,
@@ -188,26 +196,28 @@ def get_all_documents() -> list[dict[str, Any]]:
                         "upload_date": meta.get("upload_date", "2026-09-12"),
                     }
 
-                docs_map[doc_name]["chunk_count"] += 1
-                docs_map[doc_name]["pages"].add(page)
-                if page > docs_map[doc_name]["page_count"]:
-                    docs_map[doc_name]["page_count"] = page
+                qdrant_docs_map[doc_name]["chunk_count"] += 1
+                qdrant_docs_map[doc_name]["pages"].add(page)
+                if page > qdrant_docs_map[doc_name]["page_count"]:
+                    qdrant_docs_map[doc_name]["page_count"] = page
 
-            # Convert set of pages to count
-            result = []
-            for d in docs_map.values():
-                d["page_count"] = max(len(d["pages"]), d["page_count"])
-                del d["pages"]
-                result.append(d)
+            for doc_name, qd in qdrant_docs_map.items():
+                qd["page_count"] = max(len(qd["pages"]), qd["page_count"])
+                del qd["pages"]
 
-            if result:
-                return sorted(result, key=lambda x: x["document_name"])
+                if doc_name in docs_map:
+                    # Enrich existing document with vector store stats
+                    docs_map[doc_name]["chunk_count"] = max(docs_map[doc_name].get("chunk_count", 0), qd["chunk_count"])
+                    docs_map[doc_name]["page_count"] = max(docs_map[doc_name].get("page_count", 1), qd["page_count"])
+                    docs_map[doc_name]["status"] = "Indexed"
+                else:
+                    # Add newly uploaded document from Qdrant
+                    docs_map[doc_name] = qd
 
     except Exception as err:
-        logger.warning(f"Qdrant scroll fallback triggered: {err}")
+        logger.warning(f"Qdrant scroll notice in get_all_documents: {err}")
 
-    # Fallback to local corpus scan if Qdrant returned 0 documents
-    return scan_documents_from_disk()
+    return sorted(list(docs_map.values()), key=lambda x: x["document_name"])
 
 
 def upload_and_index_document(file_path: Path, study_id: str | None = None) -> dict[str, Any]:

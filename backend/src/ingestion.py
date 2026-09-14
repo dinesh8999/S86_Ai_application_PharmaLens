@@ -118,11 +118,41 @@ def ingest_file(file_path: Path, study_id: str | None = None) -> dict[str, Any]:
     if not raw_text.strip():
         raise ValueError(f"No text could be extracted from {filename}")
 
+    # Extract metadata from header if available
+    doc_id = f"DOC-{uuid.uuid4().hex[:8]}"
+    doc_type = "clinical_trial_report" if "report" in filename.lower() else ("drug_label" if "label" in filename.lower() or "insert" in filename.lower() else "safety_bulletin")
+    sponsor = "Pharmaceutical Sponsor"
+    phase = "Phase 3"
+    drug = sid
+    synthetic = False
+
+    for line in raw_text.splitlines()[:25]:
+        if line.startswith("Document ID:"):
+            doc_id = line.split(":", 1)[1].strip()
+        elif line.startswith("Study ID:"):
+            sid = line.split(":", 1)[1].strip()
+        elif line.startswith("Document Type:"):
+            doc_type = line.split(":", 1)[1].strip()
+        elif line.startswith("Sponsor:"):
+            sponsor = line.split(":", 1)[1].strip()
+        elif line.startswith("Phase:"):
+            phase = line.split(":", 1)[1].strip()
+        elif line.startswith("Drug:"):
+            drug = line.split(":", 1)[1].strip()
+        elif line.startswith("Synthetic Demo Document:"):
+            synthetic = line.split(":", 1)[1].strip().lower() == "true"
+
     meta = {
         "source": filename,
+        "document_name": filename,
+        "document_id": doc_id,
         "study_id": sid,
-        "document_type": "clinical_report" if "report" in filename.lower() else "bulletin",
-        "upload_date": "2026-09-12",
+        "document_type": doc_type,
+        "sponsor": sponsor,
+        "phase": phase,
+        "drug": drug,
+        "synthetic_demo_document": synthetic,
+        "upload_date": "2026-09-14",
     }
 
     chunks = chunk_text(raw_text, metadata=meta)
