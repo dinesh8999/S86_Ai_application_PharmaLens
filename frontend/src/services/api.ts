@@ -11,7 +11,17 @@ import {
   DashboardMetrics,
 } from '../types';
 
-const API_BASE_URLS = ['http://localhost:8000/api', 'http://127.0.0.1:8000/api', '/api'];
+const rawEnvApi = import.meta.env.VITE_API_BASE_URL?.trim();
+const configuredBase = rawEnvApi
+  ? (rawEnvApi.endsWith('/api') ? rawEnvApi.replace(/\/+$/, '') : `${rawEnvApi.replace(/\/+$/, '')}/api`)
+  : null;
+
+const API_BASE_URLS = [
+  ...(configuredBase ? [configuredBase] : []),
+  '/api',
+  'http://localhost:8000/api',
+  'http://127.0.0.1:8000/api',
+];
 
 let authTokenProvider: (() => Promise<string | null>) | null = null;
 

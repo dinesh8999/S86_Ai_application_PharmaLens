@@ -35,8 +35,8 @@ def get_settings() -> dict[str, Any]:
         "OPENAI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai/"
     )
     chat_model = os.getenv("CHAT_MODEL", "gemini-3.6-flash")
-    embed_model = os.getenv("EMBED_MODEL", "gemini-embedding-001")
     qdrant_url = os.getenv("QDRANT_URL", "http://localhost:6333")
+    qdrant_api_key = os.getenv("QDRANT_API_KEY", "")
     qdrant_collection = os.getenv("QDRANT_COLLECTION", "rag_chunks")
     
     try:
@@ -55,6 +55,7 @@ def get_settings() -> dict[str, Any]:
         "chat_model": chat_model,
         "embed_model": embed_model,
         "qdrant_url": qdrant_url,
+        "qdrant_api_key": qdrant_api_key,
         "qdrant_collection": qdrant_collection,
         "vector_dimension": vector_dim,
         "cache_ttl_seconds": cache_ttl,

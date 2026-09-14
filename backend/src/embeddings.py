@@ -59,7 +59,7 @@ def embed_query(query: str) -> list[float]:
 
 def embed_texts(texts: list[str]) -> list[list[float]]:
     """
-    Generate embeddings for a list of text chunks.
+    Generate embeddings for a list of text chunks with automatic rate limit backoff.
     """
     if not texts:
         return []
@@ -71,20 +71,37 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
 
     import time
     embeddings = []
-    batch_size = 32
+    batch_size = 16  # Smaller batch size to prevent hitting free-tier RPM limits
+
     for i in range(0, len(texts), batch_size):
         batch = texts[i : i + batch_size]
-        try:
-            response = client.embeddings.create(
-                model=embed_model,
-                input=batch,
-            )
-            for item in response.data:
-                vec = _adjust_vector_dimension(item.embedding, target_dim)
-                embeddings.append(vec)
-            time.sleep(0.7)
-        except Exception as err:
-            logger.error(f"Batch embedding error: {err}")
+        max_attempts = 4
+        success = False
+
+        for attempt in range(max_attempts):
+            try:
+                response = client.embeddings.create(
+                    model=embed_model,
+                    input=batch,
+                )
+                for item in response.data:
+                    vec = _adjust_vector_dimension(item.embedding, target_dim)
+                    embeddings.append(vec)
+                success = True
+                time.sleep(1.0)  # Gentle delay between batches to stay under rate limits
+                break
+            except Exception as err:
+                err_msg = str(err)
+                if "429" in err_msg or "RESOURCE_EXHAUSTED" in err_msg or "quota" in err_msg.lower():
+                    wait_time = (attempt + 1) * 15
+                    logger.warning(f"Rate limit 429 hit. Waiting {wait_time}s before retry (attempt {attempt + 1}/{max_attempts})...")
+                    time.sleep(wait_time)
+                else:
+                    logger.error(f"Embedding error: {err}")
+                    time.sleep(2.0)
+
+        if not success:
+            logger.warning("Using normalized deterministic fallback vectors for batch after retries.")
             for t in batch:
                 embeddings.append(_generate_fallback_vector(t, target_dim))
 

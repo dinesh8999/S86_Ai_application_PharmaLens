@@ -20,22 +20,30 @@ _qdrant_client: QdrantClient | None = None
 
 
 def get_qdrant_client() -> QdrantClient:
-    """Return QdrantClient instance, falling back to local memory/disk if connection fails."""
+    """Return QdrantClient instance, supporting Qdrant Cloud or falling back to local storage."""
     global _qdrant_client
     if _qdrant_client is None:
         settings = get_settings()
         url = str(settings["qdrant_url"])
+        api_key = settings.get("qdrant_api_key") or None
+
+        # Check if remote Qdrant Cloud cluster
+        if api_key or (url.startswith("https://") and "localhost" not in url):
+            try:
+                client = QdrantClient(url=url, api_key=api_key, timeout=10.0)
+                client.get_collections()
+                logger.info(f"Connected to remote Qdrant Cloud cluster at {url}")
+                _qdrant_client = client
+                return _qdrant_client
+            except Exception as cloud_err:
+                logger.warning(f"Could not connect to Qdrant Cloud at {url}: {cloud_err}")
+
+        # Local Qdrant server connection attempt
         try:
-            import urllib.request
-            req = urllib.request.Request(f"{url.rstrip('/')}/collections", method="GET")
-            with urllib.request.urlopen(req, timeout=1.0) as resp:
-                if resp.status in (200, 204):
-                    client = QdrantClient(url=url, prefer_grpc=False, timeout=3.0)
-                    client.get_collections()
-                    logger.info(f"Connected to Qdrant server at {url}")
-                    _qdrant_client = client
-                else:
-                    raise Exception("Qdrant HTTP endpoint returned non-200")
+            client = QdrantClient(url=url, api_key=api_key, prefer_grpc=False, timeout=2.0)
+            client.get_collections()
+            logger.info(f"Connected to local Qdrant server at {url}")
+            _qdrant_client = client
         except Exception as err:
             logger.warning(f"Could not connect to Qdrant at {url} ({err}). Initializing local Qdrant instance.")
             local_path = OUTPUTS_DIR / "qdrant_db"
