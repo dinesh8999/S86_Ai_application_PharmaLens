@@ -28,16 +28,17 @@ app = FastAPI(
     version="2.0.0",
 )
 
-# Configurable CORS origins
-raw_cors = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173")
+# Configurable CORS origins with comprehensive Vercel & localhost regex support
+raw_cors = os.getenv("CORS_ORIGINS", "*")
 allowed_origins = [o.strip() for o in raw_cors.split(",") if o.strip()]
-if "*" in allowed_origins or not allowed_origins:
+if not allowed_origins or "*" in allowed_origins:
     allowed_origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_credentials=True,
+    allow_origin_regex=r"https://.*\.vercel\.app|http://localhost:\d+|http://127\.0\.0\.1:\d+",
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
