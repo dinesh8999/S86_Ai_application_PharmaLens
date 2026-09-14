@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import logging
 from typing import Any
+# pyrefly: ignore [missing-import]
 from backend.src.embeddings import embed_query, embed_texts, get_llm_client
 
 logger = logging.getLogger(__name__)

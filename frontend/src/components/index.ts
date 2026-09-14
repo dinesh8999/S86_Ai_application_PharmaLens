@@ -11,3 +11,8 @@ export { UsageMonitoring } from './UsageMonitoring';
 export { SystemHealthView } from './SystemHealthView';
 export { SettingsView } from './SettingsView';
 export { DocumentViewer } from './DocumentViewer';
+export { DashboardView } from './DashboardView';
+export { LoginView } from './auth/LoginView';
+export { LandingPage } from './LandingPage';
+
+

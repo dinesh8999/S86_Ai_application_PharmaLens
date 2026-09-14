@@ -1,7 +1,14 @@
 import React from 'react';
-import { Search, BookOpen, FileText, Dna } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Search,
+  BookOpen,
+  FileText,
+  Dna,
+} from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
-export type NavTab = 'assistant' | 'studies' | 'documents';
+export type NavTab = 'dashboard' | 'assistant' | 'studies' | 'documents';
 
 interface SidebarProps {
   activeTab: NavTab;
@@ -9,7 +16,10 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
-  const menuItems: { id: NavTab; label: string; icon: React.ReactNode }[] = [
+  const { user } = useAuth();
+
+  const primaryItems: { id: NavTab; label: string; icon: React.ReactNode }[] = [
+    { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
     { id: 'assistant', label: 'Research Assistant', icon: <Search className="w-5 h-5" /> },
     { id: 'studies', label: 'Studies', icon: <BookOpen className="w-5 h-5" /> },
     { id: 'documents', label: 'Documents', icon: <FileText className="w-5 h-5" /> },
@@ -19,7 +29,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
     <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col h-screen border-r border-slate-800 shrink-0 select-none">
       {/* Brand Header */}
       <div className="p-5 flex items-center gap-3 border-b border-slate-800">
-        <div className="p-2 bg-blue-600 rounded-xl text-white shadow-lg shadow-blue-500/20">
+        <div className="p-2 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl text-white shadow-lg shadow-blue-500/20">
           <Dna className="w-6 h-6 animate-pulse" />
         </div>
         <div>
@@ -30,7 +40,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
 
       {/* Primary Navigation Links */}
       <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
-        {menuItems.map((item) => {
+        <div className="px-3 py-1 text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">
+          Clinical Workspace
+        </div>
+        {primaryItems.map((item) => {
           const isActive = activeTab === item.id;
           return (
             <button
@@ -51,11 +64,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
 
       {/* Bottom Status Indicator */}
       <div className="p-4 m-3 bg-slate-850 rounded-xl border border-slate-800/80 text-xs text-slate-400">
-        <div className="flex items-center gap-2 mb-1 text-slate-300 font-semibold">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-          Qdrant Active
+        <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center gap-2 text-slate-300 font-semibold">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <span>Qdrant Active</span>
+          </div>
+          <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-mono font-bold">
+            {user?.role || 'RESEARCHER'}
+          </span>
         </div>
-        <p className="text-slate-500 text-[11px]">Evidence-First RAG</p>
+        <p className="text-slate-500 text-[11px]">Evidence-First RAG · 632 Chunks</p>
       </div>
     </aside>
   );

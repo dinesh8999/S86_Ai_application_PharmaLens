@@ -4,10 +4,20 @@ PharmaLens Production FastAPI Entrypoint
 
 from __future__ import annotations
 
+import os
 import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from backend.app.api import documents, health, query, studies
+from backend.app.api import (
+    dashboard,
+    documents,
+    evaluation,
+    health,
+    query,
+    sources,
+    studies,
+    usage,
+)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("pharmalens")
@@ -18,17 +28,27 @@ app = FastAPI(
     version="2.0.0",
 )
 
+# Configurable CORS origins
+raw_cors = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173")
+allowed_origins = [o.strip() for o in raw_cors.split(",") if o.strip()]
+if "*" in allowed_origins or not allowed_origins:
+    allowed_origins = ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+app.include_router(dashboard.router, prefix="/api")
 app.include_router(query.router, prefix="/api")
 app.include_router(documents.router, prefix="/api")
 app.include_router(studies.router, prefix="/api")
+app.include_router(sources.router, prefix="/api")
+app.include_router(usage.router, prefix="/api")
+app.include_router(evaluation.router, prefix="/api")
 app.include_router(health.router, prefix="/api")
 
 

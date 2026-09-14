@@ -6,12 +6,18 @@ from __future__ import annotations
 
 import logging
 from typing import Any
+# pyrefly: ignore [missing-import]
 from fastapi import APIRouter, HTTPException
+# pyrefly: ignore [missing-import]
 from pydantic import BaseModel
 
+# pyrefly: ignore [missing-import]
 from backend.app.services.embedding_service import generate_query_embedding
+# pyrefly: ignore [missing-import]
 from backend.app.services.retrieval_service import retrieve_chunks
+# pyrefly: ignore [missing-import]
 from backend.app.services.citation_service import assemble_context, build_citation_map, extract_used_citations
+# pyrefly: ignore [missing-import]
 from backend.src.citations import generate_cited_answer
 
 logger = logging.getLogger(__name__)

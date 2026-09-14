@@ -96,10 +96,11 @@ def generate_cited_answer(question: str, context: str) -> tuple[str, int, int]:
 
     user_prompt = f"RELEVANT RESEARCH CONTEXT:\n{context}\n\nRESEARCH QUESTION: {question}\n\nGROUNDED ANSWER:"
 
-    models_to_try = [chat_model]
-    for fallback in ["gemini-flash-latest", "gemini-pro-latest", "gemini-2.5-flash-lite"]:
-        if fallback not in models_to_try:
-            models_to_try.append(fallback)
+    preferred_models = ["gemini-3.6-flash", "gemini-3.5-flash-lite", chat_model, "gemini-flash-latest"]
+    models_to_try = []
+    for m in preferred_models:
+        if m and m not in models_to_try:
+            models_to_try.append(m)
 
     last_err = None
     for model_name in models_to_try:
