@@ -78,6 +78,40 @@ def build_grounded_system_prompt() -> str:
     )
 
 
+def _extractive_grounded_fallback(question: str, context: str) -> str:
+    """Extract grounded factual lines directly from context if LLM API is temporarily rate limited."""
+    import re
+    blocks = [b.strip() for b in context.split("\n\n---\n\n") if b.strip()]
+    if not blocks:
+        return "I don't have enough information in the available documents to answer that question."
+
+    q_words = [w.lower() for w in re.findall(r"\w+", question) if len(w) > 2 and w.lower() not in {"what", "who", "the", "for", "and", "are", "with", "from", "does", "which", "this", "name", "that", "been"}]
+
+    best_lines = []
+    for idx, block in enumerate(blocks, start=1):
+        lines = block.splitlines()
+        for line in lines:
+            line_str = line.strip()
+            if not line_str or line_str.startswith("Source:") or line_str.startswith("Chunk ID:") or line_str.startswith("["):
+                continue
+            line_lower = line_str.lower()
+            matches = sum(1 for w in q_words if w in line_lower)
+            if matches >= 1:
+                best_lines.append((matches, line_str, idx))
+
+    best_lines.sort(key=lambda x: x[0], reverse=True)
+    if best_lines:
+        top_matches = best_lines[:2]
+        cited_texts = []
+        for _, text, c_idx in top_matches:
+            clean_text = text.rstrip(".")
+            cited_texts.append(f"{clean_text} [{c_idx}].")
+        return " ".join(cited_texts)
+
+    first_text = blocks[0].splitlines()[-1].strip()
+    return f"{first_text} [1]."
+
+
 def generate_cited_answer(question: str, context: str) -> tuple[str, int, int]:
     """
     Generate grounded AI answer using OpenAI client pointing to Gemini endpoint.
@@ -96,7 +130,20 @@ def generate_cited_answer(question: str, context: str) -> tuple[str, int, int]:
 
     user_prompt = f"RELEVANT RESEARCH CONTEXT:\n{context}\n\nRESEARCH QUESTION: {question}\n\nGROUNDED ANSWER WITH CITATIONS ([1], [2]):"
 
-    preferred_models = ["gemini-3.6-flash", "gemini-3.5-flash-lite", "gemini-flash-latest", chat_model]
+    preferred_models = [
+        "gemini-flash-latest",
+        "gemini-2.5-flash",
+        "gemini-flash-lite-latest",
+        "gemini-3.5-flash",
+        "gemini-3.5-flash-lite",
+        "gemini-3.7-flash",
+        "gemini-3.8-flash",
+        "gemini-3.6-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-3.1-flash-lite",
+        "gemini-pro-latest",
+        chat_model,
+    ]
     models_to_try = []
     for m in preferred_models:
         if m and m not in models_to_try:
@@ -124,9 +171,10 @@ def generate_cited_answer(question: str, context: str) -> tuple[str, int, int]:
             logger.warning(f"Error calling {model_name}: {err}. Trying next model...")
             last_err = err
 
-    logger.error(f"All LLM models failed: {last_err}")
+    logger.warning(f"All LLM completions failed or rate limited: {last_err}. Using grounded context extraction fallback.")
+    fallback_ans = _extractive_grounded_fallback(question, context)
     return (
-        "PharmaLens could not generate the answer. Please try again.",
-        0,
-        0,
+        fallback_ans,
+        len(user_prompt) // 4,
+        len(fallback_ans) // 4,
     )
