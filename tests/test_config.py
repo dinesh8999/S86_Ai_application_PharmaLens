@@ -1,4 +1,5 @@
 import unittest
+# pyrefly: ignore [missing-import]
 from backend.app.core.config import get_settings, DATA_DIR, UPLOADS_DIR
 
 class TestConfig(unittest.TestCase):

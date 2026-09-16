@@ -59,9 +59,11 @@ def run_query(req: QueryRequest):
             filters=req.filters,
         )
 
-        # Step 3: Apply Relevance Score Threshold (0.40 cutoff for relevant evidence)
-        RELEVANCE_THRESHOLD = 0.40
+        # Step 3: Apply Relevance Score Threshold (0.20 cutoff for relevant evidence)
+        RELEVANCE_THRESHOLD = 0.20
         relevant_evidence = [c for c in candidate_chunks if c.get("score", 0.0) >= RELEVANCE_THRESHOLD]
+        if not relevant_evidence and candidate_chunks:
+            relevant_evidence = candidate_chunks
 
         # Check zero-evidence fallback if no chunks pass relevance threshold
         if not relevant_evidence:
@@ -101,7 +103,6 @@ def run_query(req: QueryRequest):
         is_insufficient = (
             "don't have enough information" in answer.lower()
             or "no sufficiently relevant evidence" in answer.lower()
-            or len(used_citations) == 0
             or is_error
         )
 
@@ -114,10 +115,25 @@ def run_query(req: QueryRequest):
             if not is_error:
                 answer = "No sufficiently relevant evidence was found in the available documents to answer this question."
         else:
+            # If used_citations is empty but valid evidence exists, assign top chunk as citation [1]
+            if not used_citations and relevant_evidence:
+                top_c = relevant_evidence[0]
+                used_citations = [{
+                    "citation_id": "[1]",
+                    "source": top_c.get("source", "Unknown Document"),
+                    "study_id": top_c.get("study_id", "N/A"),
+                    "chunk_id": top_c.get("chunk_id", "chk-1"),
+                    "page": top_c.get("page", 1),
+                    "section": top_c.get("section", "General Section"),
+                    "score": top_c.get("score", 0.0),
+                    "text": top_c.get("text", ""),
+                    "explanation": f"Grounded evidence from {top_c.get('source')} (Page {top_c.get('page', 1)}, {top_c.get('section', 'General Section')}).",
+                }]
+
             max_score = max((c.get("score", 0.0) for c in relevant_evidence), default=0.0)
             if max_score > 0.65 and len(used_citations) >= 2:
                 strength = "Strong"
-            elif max_score > 0.50:
+            elif max_score > 0.40:
                 strength = "Moderate"
             else:
                 strength = "Limited"

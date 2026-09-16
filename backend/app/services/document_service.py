@@ -15,7 +15,7 @@ from backend.app.core.config import DATA_DIR, UPLOADS_DIR
 # pyrefly: ignore [missing-import]
 from backend.app.services.retrieval_service import ensure_collection_exists, get_qdrant_client
 # pyrefly: ignore [missing-import]
-from backend.src.ingestion import ingest_file
+from backend.src.ingestion import ingest_file, extract_text_from_file
 
 logger = logging.getLogger(__name__)
 
@@ -59,6 +59,7 @@ def scan_documents_from_disk() -> list[dict[str, Any]]:
     reports_dir = DATA_DIR / "expanded_corpus" / "clinical_reports"
     if not reports_dir.exists() or not any(reports_dir.glob("*.txt")):
         try:
+            # pyrefly: ignore [missing-import]
             from backend.scripts.generate_expanded_corpus import generate_deep_clinical_report
             logger.info("Auto-generating expanded clinical corpus on disk...")
             # Run generator script
@@ -92,8 +93,7 @@ def scan_documents_from_disk() -> list[dict[str, Any]]:
                 continue
 
             try:
-                with open(f, "r", encoding="utf-8", errors="ignore") as fp:
-                    content = fp.read()
+                content = extract_text_from_file(f)
 
                 doc_id = f"DOC-{hash(doc_name) & 0xffff}"
                 study_id = "STUDY-001"
@@ -103,21 +103,37 @@ def scan_documents_from_disk() -> list[dict[str, Any]]:
                 drug = "Target Compound"
                 synthetic = False
 
-                for line in content.splitlines()[:20]:
-                    if line.startswith("Document ID:"):
-                        doc_id = line.split(":", 1)[1].strip()
-                    elif line.startswith("Study ID:"):
-                        study_id = line.split(":", 1)[1].strip()
-                    elif line.startswith("Document Type:"):
-                        doc_type = line.split(":", 1)[1].strip()
-                    elif line.startswith("Sponsor:"):
-                        sponsor = line.split(":", 1)[1].strip()
-                    elif line.startswith("Phase:"):
-                        phase = line.split(":", 1)[1].strip()
-                    elif line.startswith("Drug:"):
-                        drug = line.split(":", 1)[1].strip()
-                    elif line.startswith("Synthetic Demo Document:"):
-                        synthetic = line.split(":", 1)[1].strip().lower() == "true"
+                # Extract metadata patterns
+                doc_id_match = re.search(r"(?i)Document ID[:\s\n]+([A-Z0-9\-_]+)", content)
+                if doc_id_match:
+                    doc_id = doc_id_match.group(1).strip()
+
+                study_id_match = re.search(r"(?i)Study ID[:\s\n]+([A-Z0-9\-_]+)", content)
+                if study_id_match:
+                    study_id = study_id_match.group(1).strip()
+                elif "PL-NICIP" in doc_id or "nicip" in doc_name.lower():
+                    study_id = "STUDY-NICIP"
+
+                doc_type_match = re.search(r"(?i)Document Type[:\s\n]+([A-Za-z0-9\s\-_\(\)]+)", content)
+                if doc_type_match:
+                    dt_val = doc_type_match.group(1).splitlines()[0].strip()
+                    if dt_val:
+                        doc_type = dt_val
+
+                brand_match = re.search(r"(?i)Brand[:\s\n]+([A-Za-z0-9\s\-_]+)", content)
+                generic_match = re.search(r"(?i)Generic name[:\s\n]+([A-Za-z0-9\s\-_]+)", content)
+                drug_match = re.search(r"(?i)Drug[:\s\n]+([A-Za-z0-9\s\-_]+)", content)
+                if brand_match and generic_match:
+                    drug = f"{brand_match.group(1).strip()} ({generic_match.group(1).strip()})"
+                elif brand_match:
+                    drug = brand_match.group(1).strip()
+                elif generic_match:
+                    drug = generic_match.group(1).strip()
+                elif drug_match:
+                    drug = drug_match.group(1).strip()
+
+                if "synthetic" in content.lower():
+                    synthetic = True
 
                 page_matches = re.findall(r"(?i)---\s*page\s*(\d+)\s*---", content)
                 page_count = max(len(page_matches), 1)
@@ -293,26 +309,47 @@ def get_document_detail(document_name: str) -> dict[str, Any] | None:
 
     if file_path and file_path.exists():
         try:
-            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-                raw_content = f.read()
+            raw_content = extract_text_from_file(file_path)
 
             # Parse metadata lines from header
-            lines = raw_content.splitlines()
-            for l in lines[:20]:
-                if l.startswith("Document ID:"):
-                    doc_id = l.split(":", 1)[1].strip()
-                elif l.startswith("Study ID:"):
-                    study_id = l.split(":", 1)[1].strip()
-                elif l.startswith("Document Type:"):
-                    raw_doc_type = l.split(":", 1)[1].strip()
-                elif l.startswith("Sponsor:"):
-                    sponsor = l.split(":", 1)[1].strip()
-                elif l.startswith("Phase:"):
-                    phase = l.split(":", 1)[1].strip()
-                elif l.startswith("Drug:"):
-                    drug = l.split(":", 1)[1].strip()
-                elif l.startswith("Synthetic Demo Document:"):
-                    synthetic = l.split(":", 1)[1].strip().lower() == "true"
+            doc_id_match = re.search(r"(?i)Document ID[:\s\n]+([A-Z0-9\-_]+)", raw_content)
+            if doc_id_match:
+                doc_id = doc_id_match.group(1).strip()
+
+            study_id_match = re.search(r"(?i)Study ID[:\s\n]+([A-Z0-9\-_]+)", raw_content)
+            if study_id_match:
+                study_id = study_id_match.group(1).strip()
+            elif "PL-NICIP" in doc_id or "nicip" in resolved_name.lower():
+                study_id = "STUDY-NICIP"
+
+            doc_type_match = re.search(r"(?i)Document Type[:\s\n]+([A-Za-z0-9\s\-_\(\)]+)", raw_content)
+            if doc_type_match:
+                dt_val = doc_type_match.group(1).splitlines()[0].strip()
+                if dt_val:
+                    raw_doc_type = dt_val
+
+            brand_match = re.search(r"(?i)Brand[:\s\n]+([A-Za-z0-9\s\-_]+)", raw_content)
+            generic_match = re.search(r"(?i)Generic name[:\s\n]+([A-Za-z0-9\s\-_]+)", raw_content)
+            drug_match = re.search(r"(?i)Drug[:\s\n]+([A-Za-z0-9\s\-_]+)", raw_content)
+            if brand_match and generic_match:
+                drug = f"{brand_match.group(1).strip()} ({generic_match.group(1).strip()})"
+            elif brand_match:
+                drug = brand_match.group(1).strip()
+            elif generic_match:
+                drug = generic_match.group(1).strip()
+            elif drug_match:
+                drug = drug_match.group(1).strip()
+
+            sponsor_match = re.search(r"(?i)Sponsor[:\s\n]+([A-Za-z0-9\s\-_]+)", raw_content)
+            if sponsor_match:
+                sponsor = sponsor_match.group(1).splitlines()[0].strip()
+
+            phase_match = re.search(r"(?i)Phase[:\s\n]+([A-Za-z0-9\s\-_]+)", raw_content)
+            if phase_match:
+                phase = phase_match.group(1).splitlines()[0].strip()
+
+            if "synthetic" in raw_content.lower():
+                synthetic = True
 
             # Parse pages
             page_splits = re.split(r"(?i)---\s*page\s*(\d+)\s*---", raw_content)

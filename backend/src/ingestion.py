@@ -60,57 +60,88 @@ def chunk_text(
     overlap: int = 100,
     metadata: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
-    """Recursive chunking strategy preserving source metadata."""
+    """Recursive chunking strategy preserving source metadata, page numbers, and section headers."""
+    import re
     if not text or not text.strip():
         return []
 
-    meta = metadata or {}
-
-    raw_paragraphs = [p.strip() for p in text.split("\n\n") if p.strip()]
+    meta = dict(metadata or {})
     chunks = []
-    current_chunk = ""
     chunk_idx = 1
 
-    for para in raw_paragraphs:
-        if len(current_chunk) + len(para) <= chunk_size:
-            current_chunk += ("\n\n" + para) if current_chunk else para
-        else:
-            if current_chunk:
-                chunk_id = f"chk-{uuid.uuid4().hex[:8]}"
-                chunks.append(
-                    {
-                        "chunk_id": chunk_id,
-                        "text": current_chunk.strip(),
-                        "metadata": {
-                            **meta,
-                            "chunk_index": chunk_idx,
-                            "original_chunk_id": chunk_id,
-                        },
-                    }
-                )
-                chunk_idx += 1
-            overlap_text = current_chunk[-overlap:] if len(current_chunk) > overlap else ""
-            current_chunk = (overlap_text + "\n\n" + para).strip()
+    # Split by pages if present
+    page_splits = re.split(r"(?i)---\s*page\s*(\d+)\s*---", text)
+    if len(page_splits) > 1:
+        # We have page markers
+        pages_content = []
+        for i in range(1, len(page_splits), 2):
+            pnum = int(page_splits[i])
+            ptext = page_splits[i + 1].strip()
+            pages_content.append((pnum, ptext))
+    else:
+        pages_content = [(meta.get("page", 1), text.strip())]
 
-    if current_chunk:
-        chunk_id = f"chk-{uuid.uuid4().hex[:8]}"
-        chunks.append(
-            {
-                "chunk_id": chunk_id,
-                "text": current_chunk.strip(),
-                "metadata": {
-                    **meta,
-                    "chunk_index": chunk_idx,
-                    "original_chunk_id": chunk_id,
-                },
-            }
-        )
+    for pnum, ptext in pages_content:
+        # Detect active section title in this page
+        current_section = meta.get("section", "General Section")
+        secs = re.findall(r"(?m)^(?:##|Section:|Topic:)\s*(.+)", ptext)
+        if secs:
+            current_section = secs[0].strip()
+
+        raw_paragraphs = [p.strip() for p in ptext.split("\n\n") if p.strip()]
+        current_chunk = ""
+
+        for para in raw_paragraphs:
+            # Update section if paragraph is a header
+            header_match = re.match(r"(?m)^(?:##|Section:|Topic:)\s*(.+)", para)
+            if header_match:
+                current_section = header_match.group(1).strip()
+
+            if len(current_chunk) + len(para) <= chunk_size:
+                current_chunk += ("\n\n" + para) if current_chunk else para
+            else:
+                if current_chunk:
+                    chunk_id = f"chk-{uuid.uuid4().hex[:8]}"
+                    chunks.append(
+                        {
+                            "chunk_id": chunk_id,
+                            "text": current_chunk.strip(),
+                            "metadata": {
+                                **meta,
+                                "page": pnum,
+                                "section": current_section,
+                                "chunk_index": chunk_idx,
+                                "original_chunk_id": chunk_id,
+                            },
+                        }
+                    )
+                    chunk_idx += 1
+                overlap_text = current_chunk[-overlap:] if len(current_chunk) > overlap else ""
+                current_chunk = (overlap_text + "\n\n" + para).strip()
+
+        if current_chunk:
+            chunk_id = f"chk-{uuid.uuid4().hex[:8]}"
+            chunks.append(
+                {
+                    "chunk_id": chunk_id,
+                    "text": current_chunk.strip(),
+                    "metadata": {
+                        **meta,
+                        "page": pnum,
+                        "section": current_section,
+                        "chunk_index": chunk_idx,
+                        "original_chunk_id": chunk_id,
+                    },
+                }
+            )
+            chunk_idx += 1
 
     return chunks
 
 
 def ingest_file(file_path: Path, study_id: str | None = None) -> dict[str, Any]:
-    """Ingest a single document file into Qdrant."""
+    """Ingest a single document file into Qdrant with robust metadata extraction."""
+    import re
     filename = file_path.name
     sid = study_id or infer_study_id(filename)
 
@@ -126,21 +157,54 @@ def ingest_file(file_path: Path, study_id: str | None = None) -> dict[str, Any]:
     drug = sid
     synthetic = False
 
-    for line in raw_text.splitlines()[:25]:
-        if line.startswith("Document ID:"):
-            doc_id = line.split(":", 1)[1].strip()
-        elif line.startswith("Study ID:"):
-            sid = line.split(":", 1)[1].strip()
-        elif line.startswith("Document Type:"):
-            doc_type = line.split(":", 1)[1].strip()
-        elif line.startswith("Sponsor:"):
-            sponsor = line.split(":", 1)[1].strip()
-        elif line.startswith("Phase:"):
-            phase = line.split(":", 1)[1].strip()
-        elif line.startswith("Drug:"):
-            drug = line.split(":", 1)[1].strip()
-        elif line.startswith("Synthetic Demo Document:"):
-            synthetic = line.split(":", 1)[1].strip().lower() == "true"
+    # Check for Document ID pattern
+    doc_id_match = re.search(r"(?i)Document ID[:\s\n]+([A-Z0-9\-_]+)", raw_text)
+    if doc_id_match:
+        doc_id = doc_id_match.group(1).strip()
+
+    # Check for Study ID pattern
+    study_id_match = re.search(r"(?i)Study ID[:\s\n]+([A-Z0-9\-_]+)", raw_text)
+    if study_id_match:
+        sid = study_id_match.group(1).strip()
+    elif "PL-NICIP" in doc_id or "nicip" in filename.lower():
+        sid = "STUDY-NICIP"
+
+    # Check for Document Type pattern
+    doc_type_match = re.search(r"(?i)Document Type[:\s\n]+([A-Za-z0-9\s\-_\(\)]+)", raw_text)
+    if doc_type_match:
+        dt_val = doc_type_match.group(1).splitlines()[0].strip()
+        if dt_val:
+            doc_type = dt_val
+
+    # Check for Brand / Drug name
+    brand_match = re.search(r"(?i)Brand[:\s\n]+([A-Za-z0-9\s\-_]+)", raw_text)
+    generic_match = re.search(r"(?i)Generic name[:\s\n]+([A-Za-z0-9\s\-_]+)", raw_text)
+    drug_match = re.search(r"(?i)Drug[:\s\n]+([A-Za-z0-9\s\-_]+)", raw_text)
+    
+    if brand_match and generic_match:
+        drug = f"{brand_match.group(1).strip()} ({generic_match.group(1).strip()})"
+    elif brand_match:
+        drug = brand_match.group(1).strip()
+    elif generic_match:
+        drug = generic_match.group(1).strip()
+    elif drug_match:
+        drug = drug_match.group(1).strip()
+    elif "nicip" in filename.lower():
+        drug = "Nicip (Nimesulide)"
+
+    # Check for Sponsor
+    sponsor_match = re.search(r"(?i)Sponsor[:\s\n]+([A-Za-z0-9\s\-_]+)", raw_text)
+    if sponsor_match:
+        sponsor = sponsor_match.group(1).splitlines()[0].strip()
+
+    # Check for Phase
+    phase_match = re.search(r"(?i)Phase[:\s\n]+([A-Za-z0-9\s\-_]+)", raw_text)
+    if phase_match:
+        phase = phase_match.group(1).splitlines()[0].strip()
+
+    # Check for Synthetic status
+    if "synthetic" in raw_text.lower() or "synthetic demonstration" in raw_text.lower():
+        synthetic = True
 
     meta = {
         "source": filename,

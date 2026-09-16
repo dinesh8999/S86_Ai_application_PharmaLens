@@ -59,7 +59,7 @@ def get_qdrant_client() -> QdrantClient:
 
 
 def ensure_collection_exists(collection_name: str | None = None, dimension: int | None = None) -> str:
-    """Ensure Qdrant collection exists with proper vector dimension and Cosine metric."""
+    """Ensure Qdrant collection exists with proper vector dimension, Cosine metric, and payload indices."""
     settings = get_settings()
     col_name = collection_name or str(settings["qdrant_collection"])
     dim = dimension or int(settings["vector_dimension"])
@@ -76,10 +76,98 @@ def ensure_collection_exists(collection_name: str | None = None, dimension: int 
                     distance=Distance.COSINE,
                 ),
             )
+        
+        # Ensure keyword payload indices exist for filtering
+        indexed_fields = [
+            "metadata.document_name",
+            "metadata.source",
+            "metadata.study_id",
+            "metadata.document_type",
+            "metadata.document_id",
+            "metadata.drug",
+        ]
+        for field in indexed_fields:
+            try:
+                client.create_payload_index(
+                    collection_name=col_name,
+                    field_name=field,
+                    field_schema="keyword",
+                )
+            except Exception:
+                pass
     except Exception as err:
         logger.error(f"Error ensuring Qdrant collection: {err}")
 
     return col_name
+
+
+def _normalize_token(text: str) -> str:
+    """Normalize text token for resilient substring matching."""
+    import re
+    return re.sub(r"[^a-z0-9]", "", (text or "").lower())
+
+
+def _chunk_matches_filters(chunk_meta: dict[str, Any], filters: dict[str, Any]) -> bool:
+    """Check if a chunk's metadata matches the supplied query filters resiliently."""
+    if not filters:
+        return True
+
+    doc_name_filter = filters.get("document_name")
+    if doc_name_filter and str(doc_name_filter).strip():
+        target = str(doc_name_filter).strip().lower()
+        target_norm = _normalize_token(target)
+
+        meta_name = str(chunk_meta.get("document_name", "")).lower()
+        meta_source = str(chunk_meta.get("source", "")).lower()
+        meta_doc_id = str(chunk_meta.get("document_id", "")).lower()
+        meta_drug = str(chunk_meta.get("drug", "")).lower()
+
+        name_norm = _normalize_token(meta_name)
+        source_norm = _normalize_token(meta_source)
+        doc_id_norm = _normalize_token(meta_doc_id)
+        drug_norm = _normalize_token(meta_drug)
+
+        matched_doc = (
+            target in meta_name
+            or meta_name in target
+            or target in meta_source
+            or meta_source in target
+            or target in meta_doc_id
+            or meta_doc_id in target
+            or (target_norm and (
+                target_norm in name_norm
+                or name_norm in target_norm
+                or target_norm in source_norm
+                or source_norm in target_norm
+                or target_norm in doc_id_norm
+                or doc_id_norm in target_norm
+                or target_norm in drug_norm
+            ))
+        )
+        if not matched_doc:
+            return False
+
+    study_filter = filters.get("study_id")
+    if study_filter and str(study_filter).strip():
+        sid_target = str(study_filter).strip().lower()
+        if sid_target not in {"all studies", "all", "none", ""}:
+            meta_sid = str(chunk_meta.get("study_id", "")).lower()
+            sid_norm = _normalize_token(sid_target)
+            meta_sid_norm = _normalize_token(meta_sid)
+            if sid_norm not in meta_sid_norm and meta_sid_norm not in sid_norm:
+                return False
+
+    doc_type_filter = filters.get("document_type")
+    if doc_type_filter and str(doc_type_filter).strip():
+        dt_target = str(doc_type_filter).strip().lower()
+        if dt_target not in {"all types", "all", "none", ""}:
+            meta_dt = str(chunk_meta.get("document_type", "")).lower()
+            dt_norm = _normalize_token(dt_target)
+            meta_dt_norm = _normalize_token(meta_dt)
+            if dt_norm not in meta_dt_norm and meta_dt_norm not in dt_norm:
+                return False
+
+    return True
 
 
 def store_chunks(points: list[dict[str, Any]], collection_name: str | None = None) -> int:
@@ -115,7 +203,7 @@ def retrieve_context(
     collection_name: str | None = None,
 ) -> list[dict[str, Any]]:
     """
-    Retrieve top-k relevant chunks from Qdrant vector database.
+    Retrieve top-k relevant chunks from Qdrant vector database with resilient fallback filtering.
     """
     if k <= 0:
         raise ValueError("k must be greater than 0")
@@ -123,61 +211,124 @@ def retrieve_context(
     col_name = ensure_collection_exists(collection_name)
     client = get_qdrant_client()
 
-    query_filter = None
+    # Clean active filters
+    active_filters = {}
     if filters:
-        must_conditions = []
-        for key, val in filters.items():
-            if val:
-                must_conditions.append(
-                    FieldCondition(
-                        key=f"metadata.{key}",
-                        match=MatchValue(value=val),
-                    )
-                )
-        if must_conditions:
-            query_filter = Filter(must=must_conditions)
+        for k_name, v_val in filters.items():
+            if v_val and str(v_val).strip() and str(v_val).strip().lower() not in {"all", "all studies", "all types"}:
+                active_filters[k_name] = str(v_val).strip()
 
+    def _format_point(res: Any) -> dict[str, Any]:
+        payload = getattr(res, "payload", {}) or {}
+        score = getattr(res, "score", 0.0)
+        point_id = getattr(res, "id", "")
+        meta = payload.get("metadata", {})
+        return {
+            "score": round(score, 4),
+            "chunk_id": payload.get("original_chunk_id", str(point_id)),
+            "text": payload.get("text", ""),
+            "metadata": meta,
+            "source": meta.get("source") or meta.get("document_name") or "Unknown",
+            "study_id": meta.get("study_id", "N/A"),
+            "page": meta.get("page", 1),
+            "section": meta.get("section", "General Section"),
+            "chunk_index": meta.get("chunk_index", 1),
+        }
+
+    # Step 1: Try exact filtered Qdrant query if filters are present
+    if active_filters:
+        must_conditions = []
+        for key, val in active_filters.items():
+            must_conditions.append(
+                FieldCondition(
+                    key=f"metadata.{key}",
+                    match=MatchValue(value=val),
+                )
+            )
+        q_filter = Filter(must=must_conditions) if must_conditions else None
+
+        try:
+            if hasattr(client, "query_points"):
+                resp = client.query_points(
+                    collection_name=col_name,
+                    query=query_vector,
+                    limit=k,
+                    query_filter=q_filter,
+                    with_payload=True,
+                )
+                points = resp.points
+            elif hasattr(client, "search"):
+                points = client.search(
+                    collection_name=col_name,
+                    query_vector=query_vector,
+                    limit=k,
+                    query_filter=q_filter,
+                    with_payload=True,
+                )
+            else:
+                points = []
+
+            if points:
+                return [_format_point(p) for p in points]
+        except Exception as err:
+            logger.warning(f"Direct Qdrant filtered search notice: {err}. Falling back to broad search.")
+
+    # Step 2: Broad semantic search + In-memory resilient filter matching
     try:
+        search_limit = max(k * 8, 32)
         if hasattr(client, "query_points"):
-            response = client.query_points(
+            resp = client.query_points(
                 collection_name=col_name,
                 query=query_vector,
-                limit=k,
-                query_filter=query_filter,
+                limit=search_limit,
                 with_payload=True,
             )
-            points = response.points
+            raw_points = resp.points
         elif hasattr(client, "search"):
-            points = client.search(
+            raw_points = client.search(
                 collection_name=col_name,
                 query_vector=query_vector,
-                limit=k,
-                query_filter=query_filter,
+                limit=search_limit,
                 with_payload=True,
             )
         else:
-            points = []
+            raw_points = []
 
-        retrieved = []
-        for res in points:
-            payload = getattr(res, "payload", {}) or {}
-            score = getattr(res, "score", 0.0)
-            point_id = getattr(res, "id", "")
-            retrieved.append(
-                {
-                    "score": round(score, 4),
-                    "chunk_id": payload.get("original_chunk_id", str(point_id)),
-                    "text": payload.get("text", ""),
-                    "metadata": payload.get("metadata", {}),
-                    "source": payload.get("metadata", {}).get("source", "Unknown"),
-                    "study_id": payload.get("metadata", {}).get("study_id", "N/A"),
-                    "page": payload.get("metadata", {}).get("page"),
-                    "section": payload.get("metadata", {}).get("section"),
-                    "chunk_index": payload.get("metadata", {}).get("chunk_index"),
-                }
+        all_candidates = [_format_point(p) for p in raw_points]
+
+        if active_filters:
+            # Filter candidate chunks in memory
+            matched_candidates = [c for c in all_candidates if _chunk_matches_filters(c.get("metadata", {}), active_filters)]
+            if matched_candidates:
+                return matched_candidates[:k]
+
+            # If still no candidates found from vector search, scroll collection records for the filtered doc
+            records, _ = client.scroll(
+                collection_name=col_name,
+                limit=500,
+                with_payload=True,
+                with_vectors=False,
             )
+            doc_records = []
+            for r in records:
+                pl = r.payload or {}
+                m = pl.get("metadata", {})
+                if _chunk_matches_filters(m, active_filters):
+                    doc_records.append({
+                        "score": 0.50,
+                        "chunk_id": pl.get("original_chunk_id", str(r.id)),
+                        "text": pl.get("text", ""),
+                        "metadata": m,
+                        "source": m.get("source") or m.get("document_name") or "Unknown",
+                        "study_id": m.get("study_id", "N/A"),
+                        "page": m.get("page", 1),
+                        "section": m.get("section", "General Section"),
+                        "chunk_index": m.get("chunk_index", 1),
+                    })
+            if doc_records:
+                return doc_records[:k]
 
-        return retrieved
+        return all_candidates[:k]
 
     except Exception as err:
         logger.error(f"Retrieval error: {err}")

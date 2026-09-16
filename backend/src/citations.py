@@ -70,7 +70,7 @@ def build_grounded_system_prompt() -> str:
         "Your duty is to answer pharmaceutical research questions using ONLY the provided research context.\n\n"
         "STRICT GROUNDING RULES:\n"
         "1. Do not use outside knowledge or make assumptions beyond the provided context.\n"
-        "2. Cite factual claims using citation markers such as [1], [2], corresponding to context block numbers.\n"
+        "2. ALWAYS cite factual claims using citation markers such as [1], [2] at the end of the statement corresponding to context block numbers.\n"
         "3. Only use citation markers that exist in the provided context.\n"
         "4. Do NOT invent citations or fabricate facts.\n"
         "5. If the provided context does not contain enough information to answer the question accurately, respond ONLY with:\n"
@@ -94,9 +94,9 @@ def generate_cited_answer(question: str, context: str) -> tuple[str, int, int]:
     chat_model = settings["chat_model"]
     client = get_llm_client()
 
-    user_prompt = f"RELEVANT RESEARCH CONTEXT:\n{context}\n\nRESEARCH QUESTION: {question}\n\nGROUNDED ANSWER:"
+    user_prompt = f"RELEVANT RESEARCH CONTEXT:\n{context}\n\nRESEARCH QUESTION: {question}\n\nGROUNDED ANSWER WITH CITATIONS ([1], [2]):"
 
-    preferred_models = ["gemini-3.6-flash", "gemini-3.5-flash-lite", chat_model, "gemini-flash-latest"]
+    preferred_models = ["gemini-3.6-flash", "gemini-3.5-flash-lite", "gemini-flash-latest", chat_model]
     models_to_try = []
     for m in preferred_models:
         if m and m not in models_to_try:

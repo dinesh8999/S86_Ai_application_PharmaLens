@@ -1,4 +1,5 @@
 import unittest
+# pyrefly: ignore [missing-import]
 from backend.app.services.citation_service import extract_used_citations
 
 class TestCitationService(unittest.TestCase):
