@@ -18,7 +18,7 @@ from backend.app.services.retrieval_service import retrieve_chunks
 # pyrefly: ignore [missing-import]
 from backend.app.services.citation_service import assemble_context, build_citation_map, extract_used_citations
 # pyrefly: ignore [missing-import]
-from backend.src.citations import generate_cited_answer
+from backend.src.citations import generate_cited_answer, _extractive_grounded_fallback
 
 logger = logging.getLogger(__name__)
 
@@ -94,6 +94,16 @@ def run_query(req: QueryRequest):
 
         # Step 5: Generate grounded LLM answer
         answer, in_tok, out_tok = generate_cited_answer(question, context)
+
+        # If LLM returned generic refusal but we have highly relevant evidence, attempt extractive grounded answer
+        if (
+            "don't have enough information" in answer.lower()
+            or "no sufficiently relevant evidence" in answer.lower()
+            or not answer.strip()
+        ):
+            fallback_ans = _extractive_grounded_fallback(question, context)
+            if "don't have enough information" not in fallback_ans.lower():
+                answer = fallback_ans
 
         # Step 6: Extract explicitly used citations
         used_citations = extract_used_citations(answer, citation_map)
