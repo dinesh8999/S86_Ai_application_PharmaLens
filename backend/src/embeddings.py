@@ -75,7 +75,7 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
 
     for i in range(0, len(texts), batch_size):
         batch = texts[i : i + batch_size]
-        max_attempts = 4
+        max_attempts = 2
         success = False
 
         for attempt in range(max_attempts):
@@ -88,17 +88,16 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
                     vec = _adjust_vector_dimension(item.embedding, target_dim)
                     embeddings.append(vec)
                 success = True
-                time.sleep(1.0)  # Gentle delay between batches to stay under rate limits
+                time.sleep(0.5)
                 break
             except Exception as err:
                 err_msg = str(err)
                 if "429" in err_msg or "RESOURCE_EXHAUSTED" in err_msg or "quota" in err_msg.lower():
-                    wait_time = (attempt + 1) * 15
-                    logger.warning(f"Rate limit 429 hit. Waiting {wait_time}s before retry (attempt {attempt + 1}/{max_attempts})...")
-                    time.sleep(wait_time)
+                    logger.warning(f"Rate limit hit on embedding. Fast retry (attempt {attempt + 1}/{max_attempts})...")
+                    time.sleep(3.0)
                 else:
                     logger.error(f"Embedding error: {err}")
-                    time.sleep(2.0)
+                    time.sleep(1.0)
 
         if not success:
             logger.warning("Using normalized deterministic fallback vectors for batch after retries.")

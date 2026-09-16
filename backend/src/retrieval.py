@@ -30,7 +30,7 @@ def get_qdrant_client() -> QdrantClient:
         # Check if remote Qdrant Cloud cluster
         if api_key and url.startswith("https://") and "localhost" not in url:
             try:
-                client = QdrantClient(url=url, api_key=api_key, timeout=3.0)
+                client = QdrantClient(url=url, api_key=api_key, timeout=30.0)
                 client.get_collections()
                 logger.info(f"Connected to remote Qdrant Cloud cluster at {url}")
                 _qdrant_client = client

@@ -262,24 +262,32 @@ def infer_study_id(filename: str) -> str:
 
 
 def seed_sample_clinical_documents() -> None:
-    """Seed initial sample clinical trial reports and bulletins into vector storage."""
-    sample_dir = DATA_DIR / "sample_corpus"
-    if not sample_dir.exists():
-        sample_dir = Path(__file__).resolve().parent.parent / "data" / "sample_corpus"
+    """Seed initial sample clinical trial reports, drug labels, and bulletins into vector storage."""
+    existing_docs = get_indexed_documents()
+    existing_names = {d["document_name"] for d in existing_docs}
 
-    if not sample_dir.exists():
-        logger.info("Sample corpus directory not found. Skipping auto-seeding.")
-        return
+    search_dirs = [
+        DATA_DIR / "expanded_corpus" / "clinical_reports",
+        DATA_DIR / "expanded_corpus" / "drug_labels",
+        DATA_DIR / "expanded_corpus" / "safety_bulletins",
+        DATA_DIR / "expanded_corpus",
+        DATA_DIR / "sample_corpus",
+        Path(__file__).resolve().parent.parent / "data" / "sample_corpus",
+        Path(__file__).resolve().parent.parent.parent / "data" / "sample_corpus",
+        Path(__file__).resolve().parent.parent.parent / "data" / "expanded_corpus" / "clinical_reports",
+        Path(__file__).resolve().parent.parent.parent / "data" / "expanded_corpus" / "drug_labels",
+        Path(__file__).resolve().parent.parent.parent / "data" / "expanded_corpus" / "safety_bulletins",
+    ]
 
-    existing = get_indexed_documents()
-    if existing:
-        logger.info(f"Qdrant already contains {len(existing)} indexed documents. Skipping seed.")
-        return
-
-    for doc_file in sample_dir.glob("*.*"):
-        if doc_file.suffix.lower() in {".pdf", ".txt", ".md", ".docx"}:
-            try:
-                ingest_file(doc_file)
-                logger.info(f"Seeded sample document: {doc_file.name}")
-            except Exception as err:
-                logger.error(f"Error seeding {doc_file.name}: {err}")
+    for sdir in search_dirs:
+        if not sdir.exists():
+            continue
+        for doc_file in sdir.glob("*.*"):
+            if doc_file.is_file() and doc_file.suffix.lower() in {".pdf", ".txt", ".md", ".docx"}:
+                if doc_file.name not in existing_names:
+                    try:
+                        ingest_file(doc_file)
+                        existing_names.add(doc_file.name)
+                        logger.info(f"Seeded document into Qdrant: {doc_file.name}")
+                    except Exception as err:
+                        logger.error(f"Error seeding {doc_file.name}: {err}")
