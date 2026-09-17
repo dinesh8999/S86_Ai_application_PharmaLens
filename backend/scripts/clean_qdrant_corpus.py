@@ -8,7 +8,9 @@ Cleans Qdrant database to retain strictly the canonical substantial documents:
 
 from __future__ import annotations
 import logging
+# pyrefly: ignore [missing-import]
 from qdrant_client.models import Filter, FieldCondition, MatchValue
+# pyrefly: ignore [missing-import]
 from backend.src.retrieval import get_qdrant_client, ensure_collection_exists
 
 logging.basicConfig(level=logging.INFO)
