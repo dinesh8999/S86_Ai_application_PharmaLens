@@ -28,9 +28,9 @@ load_dotenv(BACKEND_DIR / ".env")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", os.getenv("GEMINI_API_KEY", ""))
 OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai/")
 CHAT_MODEL = os.getenv("CHAT_MODEL", "gemini-3.6-flash")
-EMBED_MODEL = os.getenv("EMBED_MODEL", "text-embedding-3-small")
+EMBED_MODEL = os.getenv("EMBED_MODEL", "gemini-embedding-001")
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
-QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "pharmalens_clinical_chunks")
+QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "rag_chunks")
 
 
 def get_settings() -> dict[str, Any]:
@@ -41,6 +41,6 @@ def get_settings() -> dict[str, Any]:
         "embed_model": EMBED_MODEL,
         "qdrant_url": QDRANT_URL,
         "qdrant_collection": QDRANT_COLLECTION,
-        "vector_dimension": int(os.getenv("VECTOR_DIMENSION", "1536")),
+        "vector_dimension": int(os.getenv("VECTOR_DIMENSION", "3072")),
         "cache_ttl_seconds": int(os.getenv("CACHE_TTL_SECONDS", "900")),
     }

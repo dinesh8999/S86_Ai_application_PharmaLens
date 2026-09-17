@@ -97,8 +97,8 @@ def run_query(req: QueryRequest):
 
         # If LLM returned generic refusal but we have highly relevant evidence, attempt extractive grounded answer
         if (
-            "don't have enough information" in answer.lower()
-            or "no sufficiently relevant evidence" in answer.lower()
+            (answer.strip().lower().startswith("i don't have enough information") and len(answer.strip()) < 120)
+            or "could not generate the answer" in answer.lower()
             or not answer.strip()
         ):
             fallback_ans = _extractive_grounded_fallback(question, context)
@@ -108,15 +108,15 @@ def run_query(req: QueryRequest):
         # Step 6: Extract explicitly used citations
         used_citations = extract_used_citations(answer, citation_map)
 
-        # Check if LLM output indicated lack of evidence or system error
+        # Check if answer is a pure refusal with zero evidence
         is_error = "could not generate the answer" in answer.lower()
-        is_insufficient = (
-            "don't have enough information" in answer.lower()
-            or "no sufficiently relevant evidence" in answer.lower()
-            or is_error
+        is_pure_refusal = (
+            (answer.strip().lower().startswith("i don't have enough information") and len(answer.strip()) < 120 and not used_citations)
+            or (answer.strip().lower().startswith("no sufficiently relevant evidence") and not used_citations)
+            or (is_error and not used_citations)
         )
 
-        if is_insufficient:
+        if is_pure_refusal:
             strength = "Insufficient"
             display_chunks = []
             used_citations = []
@@ -143,7 +143,7 @@ def run_query(req: QueryRequest):
             max_score = max((c.get("score", 0.0) for c in relevant_evidence), default=0.0)
             if max_score > 0.65 and len(used_citations) >= 2:
                 strength = "Strong"
-            elif max_score > 0.40:
+            elif max_score > 0.40 or len(used_citations) >= 1:
                 strength = "Moderate"
             else:
                 strength = "Limited"

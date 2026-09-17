@@ -67,14 +67,14 @@ def build_grounded_system_prompt() -> str:
     """
     return (
         "You are PharmaLens, an expert AI Clinical Research Assistant.\n"
-        "Your duty is to answer pharmaceutical research questions accurately and concisely using the provided research context.\n\n"
+        "Your duty is to answer pharmaceutical and clinical research questions accurately and concisely using ONLY the provided research context.\n\n"
         "GROUNDING GUIDELINES:\n"
         "1. Base your answer directly on the facts, trial findings, drug identity, and safety topics stated in the context.\n"
         "2. Note that active substance / active ingredient / molecule name corresponds to the generic entity for pharmaceutical brand names.\n"
         "3. ALWAYS cite factual claims using citation markers such as [1], [2] at the end of each statement corresponding to context block numbers.\n"
         "4. Only use citation markers that exist in the provided context blocks.\n"
-        "5. If the provided context genuinely contains no relevant information to answer the question, respond with:\n"
-        "   \"I don't have enough information in the available documents to answer that question.\""
+        "5. If the context contains relevant information related to the question, synthesize and present that factual evidence with citations.\n"
+        "6. If the question cannot be answered from the context, state clearly what is and is not supported by the document with citations to relevant sections."
     )
 
 
@@ -204,11 +204,11 @@ def generate_cited_answer(question: str, context: str) -> tuple[str, int, int]:
 
     # Active Gemini models supported on Google AI Studio OpenAI endpoint (ordered by latency & availability)
     preferred_models = [
-        "gemini-3-flash-preview",
         "gemini-3.1-flash-lite",
         "gemini-3.5-flash-lite",
         "gemini-3.8-flash",
         "gemini-3.6-flash",
+        "gemini-3-flash-preview",
         "gemini-3.5-flash",
         chat_model,
     ]
