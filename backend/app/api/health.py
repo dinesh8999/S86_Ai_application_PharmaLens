@@ -20,6 +20,7 @@ def health_status():
     return {
         "status": "healthy",
         "service": "PharmaLens Research Assistant API",
+        "build_version": "2026.09.17.v3",
         "chat_model": CHAT_MODEL,
         "embed_model": EMBED_MODEL,
         "qdrant_url": QDRANT_URL,
