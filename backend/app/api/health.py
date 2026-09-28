@@ -5,8 +5,11 @@ PharmaLens Health Check API Router
 from __future__ import annotations
 
 from typing import Any
+# pyrefly: ignore [missing-import]
 from fastapi import APIRouter
+# pyrefly: ignore [missing-import]
 from backend.app.core.config import CHAT_MODEL, EMBED_MODEL, QDRANT_URL
+# pyrefly: ignore [missing-import]
 from backend.app.services.document_service import get_corpus_summary
 
 router = APIRouter(prefix="/health", tags=["health"])

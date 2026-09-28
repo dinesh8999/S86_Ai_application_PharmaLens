@@ -77,15 +77,15 @@ export const LoginView: React.FC<LoginViewProps> = ({
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-10 sm:px-6 lg:px-8 relative overflow-hidden font-sans">
-      {/* Dynamic ambient background glow in light theme */}
+      {/* Dynamic ambient background glow with palette colors */}
       <div
         className={`absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full blur-3xl pointer-events-none transition-colors duration-500 ${
-          isResearcher ? 'bg-blue-100/60' : 'bg-indigo-100/60'
+          isResearcher ? 'bg-powder-200/50' : 'bg-coral-200/40'
         }`}
       />
       <div
         className={`absolute bottom-0 right-10 w-[500px] h-[500px] rounded-full blur-3xl pointer-events-none transition-colors duration-500 ${
-          isResearcher ? 'bg-cyan-100/40' : 'bg-purple-100/40'
+          isResearcher ? 'bg-petrol-200/30' : 'bg-crimson-200/30'
         }`}
       />
 
@@ -95,9 +95,9 @@ export const LoginView: React.FC<LoginViewProps> = ({
           <button
             type="button"
             onClick={onBackToLanding}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 hover:text-slate-900 text-xs font-semibold border border-slate-200 shadow-sm transition-all cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-powder-50 text-darkteal-900 text-xs font-semibold border border-powder-200 shadow-xs transition-all cursor-pointer"
           >
-            <ArrowLeft className="w-3.5 h-3.5 text-slate-500" />
+            <ArrowLeft className="w-3.5 h-3.5 text-petrol-600" />
             <span>Back to Landing Page</span>
           </button>
         </div>
@@ -108,13 +108,13 @@ export const LoginView: React.FC<LoginViewProps> = ({
         <div
           className={`inline-flex items-center justify-center p-3.5 rounded-2xl shadow-lg ring-1 ring-black/5 mb-3 transition-all duration-300 ${
             isResearcher
-              ? 'bg-gradient-to-tr from-blue-600 to-cyan-600 shadow-blue-500/20 text-white'
-              : 'bg-gradient-to-tr from-indigo-600 to-purple-600 shadow-indigo-500/20 text-white'
+              ? 'bg-gradient-to-tr from-petrol-600 to-powder-400 shadow-petrol-500/20 text-white'
+              : 'bg-gradient-to-tr from-crimson-600 to-coral-500 shadow-crimson-500/20 text-white'
           }`}
         >
           <Dna className="w-8 h-8" />
         </div>
-        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">PharmaLens</h1>
+        <h1 className="text-3xl font-extrabold text-darkteal-900 tracking-tight">PharmaLens</h1>
         <p className="mt-1 text-xs sm:text-sm text-slate-600 max-w-sm mx-auto">
           Clinical Research Intelligence & Evidence Verification Platform
         </p>
@@ -123,7 +123,7 @@ export const LoginView: React.FC<LoginViewProps> = ({
       {/* Main Container */}
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-lg relative z-10 px-4">
         {/* Role Portal Selection Tabs */}
-        <div className="grid grid-cols-2 p-1.5 bg-slate-200/80 rounded-2xl border border-slate-300/80 mb-4 shadow-sm">
+        <div className="grid grid-cols-2 p-1.5 bg-powder-100/70 rounded-2xl border border-powder-200 mb-4 shadow-xs">
           <button
             type="button"
             onClick={() => {
@@ -132,11 +132,11 @@ export const LoginView: React.FC<LoginViewProps> = ({
             }}
             className={`flex items-center justify-center gap-2 py-2.5 px-3 sm:px-4 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               isResearcher
-                ? 'bg-white text-blue-700 shadow-md ring-1 ring-black/5'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                ? 'bg-white text-petrol-700 shadow-sm ring-1 ring-black/5'
+                : 'text-slate-600 hover:text-darkteal-900 hover:bg-powder-200/50'
             }`}
           >
-            <Stethoscope className="w-4 h-4 text-blue-600" />
+            <Stethoscope className="w-4 h-4 text-petrol-600" />
             <span>Clinical Researcher</span>
           </button>
 
@@ -148,25 +148,25 @@ export const LoginView: React.FC<LoginViewProps> = ({
             }}
             className={`flex items-center justify-center gap-2 py-2.5 px-3 sm:px-4 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               !isResearcher
-                ? 'bg-white text-indigo-700 shadow-md ring-1 ring-black/5'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                ? 'bg-white text-crimson-700 shadow-sm ring-1 ring-black/5'
+                : 'text-slate-600 hover:text-darkteal-900 hover:bg-coral-100/50'
             }`}
           >
-            <ShieldCheck className="w-4 h-4 text-indigo-600" />
+            <ShieldCheck className="w-4 h-4 text-crimson-600" />
             <span>Compliance Admin</span>
           </button>
         </div>
 
         {/* Login Card (Light Themed) */}
-        <div className="bg-white py-8 px-6 sm:px-10 shadow-xl rounded-2xl border border-slate-200/90 relative">
+        <div className="bg-white py-8 px-6 sm:px-10 shadow-xl rounded-2xl border border-powder-200/80 relative">
           {/* Portal Scope Header */}
           <div className="mb-6 pb-5 border-b border-slate-100">
             <div className="flex items-center justify-between">
               <span
                 className={`text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full border ${
                   isResearcher
-                    ? 'bg-blue-50 text-blue-700 border-blue-200'
-                    : 'bg-indigo-50 text-indigo-700 border-indigo-200'
+                    ? 'bg-powder-50 text-petrol-700 border-powder-200'
+                    : 'bg-coral-50 text-crimson-700 border-coral-200'
                 }`}
               >
                 {isResearcher ? 'Investigator Portal' : 'Administrative Portal'}
@@ -175,7 +175,7 @@ export const LoginView: React.FC<LoginViewProps> = ({
                 Credential Authentication
               </span>
             </div>
-            <h2 className="text-xl font-bold text-slate-900 mt-2.5">
+            <h2 className="text-xl font-extrabold text-darkteal-900 mt-2.5">
               {isResearcher ? 'Researcher Sign In' : 'Administrator Sign In'}
             </h2>
             <p className="text-xs text-slate-600 mt-1 leading-relaxed">
@@ -193,12 +193,12 @@ export const LoginView: React.FC<LoginViewProps> = ({
                 setIsRegistering(false);
                 setError(null);
               }}
-              className={`flex-1 pb-3 text-sm font-semibold text-center border-b-2 transition-colors cursor-pointer ${
+              className={`flex-1 pb-3 text-sm font-bold text-center border-b-2 transition-colors cursor-pointer ${
                 !isRegistering
                   ? isResearcher
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-slate-500 hover:text-slate-800'
+                    ? 'border-petrol-600 text-petrol-700'
+                    : 'border-crimson-600 text-crimson-700'
+                  : 'border-transparent text-slate-500 hover:text-darkteal-900'
               }`}
             >
               Sign In
@@ -209,12 +209,12 @@ export const LoginView: React.FC<LoginViewProps> = ({
                 setIsRegistering(true);
                 setError(null);
               }}
-              className={`flex-1 pb-3 text-sm font-semibold text-center border-b-2 transition-colors cursor-pointer ${
+              className={`flex-1 pb-3 text-sm font-bold text-center border-b-2 transition-colors cursor-pointer ${
                 isRegistering
                   ? isResearcher
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-slate-500 hover:text-slate-800'
+                    ? 'border-petrol-600 text-petrol-700'
+                    : 'border-crimson-600 text-crimson-700'
+                  : 'border-transparent text-slate-500 hover:text-darkteal-900'
               }`}
             >
               Register Profile
@@ -222,8 +222,8 @@ export const LoginView: React.FC<LoginViewProps> = ({
           </div>
 
           {error && (
-            <div className="mb-4 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2.5">
-              <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600 mt-0.5" />
+            <div className="mb-4 p-3.5 rounded-xl bg-coral-50 border border-coral-200 text-coral-900 text-xs flex items-start gap-2.5">
+              <AlertTriangle className="w-4 h-4 shrink-0 text-coral-600 mt-0.5" />
               <span className="leading-relaxed">{error}</span>
             </div>
           )}
@@ -247,7 +247,7 @@ export const LoginView: React.FC<LoginViewProps> = ({
                         ? 'Dr. Eleanor Vance, Lead Investigator'
                         : 'Marcus Reed, Regulatory Lead'
                     }
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-petrol-500/20 focus:border-petrol-600 transition-all"
                   />
                 </div>
               </div>
@@ -269,7 +269,7 @@ export const LoginView: React.FC<LoginViewProps> = ({
                       ? 'investigator@novartis.com'
                       : 'admin@pharmalens.io'
                   }
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-petrol-500/20 focus:border-petrol-600 transition-all"
                 />
               </div>
             </div>
@@ -286,7 +286,7 @@ export const LoginView: React.FC<LoginViewProps> = ({
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-petrol-500/20 focus:border-petrol-600 transition-all"
                 />
               </div>
             </div>
@@ -294,10 +294,10 @@ export const LoginView: React.FC<LoginViewProps> = ({
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full flex items-center justify-center gap-2 py-3 px-4 text-white text-sm font-semibold rounded-xl shadow-md transition-all cursor-pointer disabled:opacity-50 mt-2 ${
+              className={`w-full flex items-center justify-center gap-2 py-3 px-4 text-white text-sm font-bold rounded-xl shadow-md transition-all cursor-pointer disabled:opacity-50 mt-2 ${
                 isResearcher
-                  ? 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/20'
-                  : 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/20'
+                  ? 'bg-petrol-600 hover:bg-petrol-700 shadow-petrol-600/20'
+                  : 'bg-crimson-600 hover:bg-crimson-700 shadow-crimson-600/20'
               }`}
             >
               <span>
@@ -315,8 +315,8 @@ export const LoginView: React.FC<LoginViewProps> = ({
 
           {/* Admin audit note */}
           {!isResearcher && (
-            <div className="mt-4 p-3 rounded-xl bg-indigo-50 border border-indigo-200/80 text-[11px] text-indigo-900 flex items-center gap-2">
-              <KeyRound className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+            <div className="mt-4 p-3 rounded-xl bg-coral-50 border border-coral-200 text-[11px] text-coral-900 flex items-center gap-2">
+              <KeyRound className="w-3.5 h-3.5 text-coral-600 shrink-0" />
               <span>Administrative actions and benchmark runs are logged for compliance auditing.</span>
             </div>
           )}
@@ -332,3 +332,4 @@ export const LoginView: React.FC<LoginViewProps> = ({
 };
 
 export default LoginView;
+

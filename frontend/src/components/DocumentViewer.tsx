@@ -138,11 +138,11 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
   const getDocTypeBadgeClass = (type?: string) => {
     switch (type) {
       case 'clinical_trial_report':
-        return 'bg-blue-50 text-blue-700 border-blue-200';
+        return 'bg-petrol-50 text-petrol-800 border-petrol-200';
       case 'drug_label':
-        return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+        return 'bg-powder-50 text-darkteal-900 border-powder-300';
       case 'safety_bulletin':
-        return 'bg-amber-50 text-amber-700 border-amber-200';
+        return 'bg-coral-50 text-coral-800 border-coral-200';
       default:
         return 'bg-slate-50 text-slate-700 border-slate-200';
     }
@@ -265,7 +265,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
 
             {docDetail && (
               <div className="flex items-center gap-3 text-xs text-slate-500 mt-1 flex-wrap">
-                <span className="font-mono font-semibold text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100">
+                <span className="font-mono font-semibold text-petrol-700 bg-petrol-50 px-1.5 py-0.5 rounded border border-petrol-200">
                   {docDetail.study_id}
                 </span>
                 <span>•</span>
@@ -274,7 +274,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
                 <span>{docDetail.chunk_count} Chunks</span>
                 <span>•</span>
                 {docDetail.synthetic_demo_document ? (
-                  <span className="text-purple-700 font-medium">Synthetic Demo</span>
+                  <span className="text-coral-700 font-medium">Synthetic Demo</span>
                 ) : (
                   <span className="text-emerald-700 font-medium flex items-center gap-1">
                     <ShieldCheck className="w-3.5 h-3.5" /> Authoritative Public
@@ -294,7 +294,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
               placeholder="Search in document..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 pr-8 py-1.5 text-xs bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 w-44 sm:w-56 transition"
+              className="pl-8 pr-8 py-1.5 text-xs bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-petrol-500 w-44 sm:w-56 transition"
             />
             {searchQuery && (
               <button
@@ -315,7 +315,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
           {onAskAboutDocument && docDetail && (
             <button
               onClick={() => onAskAboutDocument(docDetail.document_name)}
-              className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold rounded-lg text-xs transition flex items-center gap-1.5 cursor-pointer"
+              className="px-3 py-1.5 bg-petrol-50 hover:bg-petrol-100 text-petrol-700 font-semibold rounded-lg text-xs transition flex items-center gap-1.5 cursor-pointer border border-petrol-200"
               title="Query Research Assistant focused on this document"
             >
               <MessageSquare className="w-3.5 h-3.5" />
@@ -326,7 +326,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
           {onAskAboutStudy && docDetail && docDetail.study_id && docDetail.study_id !== 'N/A' && (
             <button
               onClick={() => onAskAboutStudy(docDetail.study_id)}
-              className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold rounded-lg text-xs transition flex items-center gap-1.5 cursor-pointer"
+              className="px-3 py-1.5 bg-crimson-50 hover:bg-crimson-100 text-crimson-700 font-semibold rounded-lg text-xs transition flex items-center gap-1.5 cursor-pointer border border-crimson-200"
               title={`Ask questions about study ${docDetail.study_id}`}
             >
               <FlaskConical className="w-3.5 h-3.5" />
@@ -353,20 +353,20 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
       {/* Main Content Area */}
       {loading ? (
         <div className="flex-1 flex flex-col items-center justify-center p-12 bg-white">
-          <div className="w-10 h-10 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4"></div>
+          <div className="w-10 h-10 border-4 border-powder-200 border-t-petrol-600 rounded-full animate-spin mb-4"></div>
           <p className="text-sm font-semibold text-slate-700">Loading document source content...</p>
           <p className="text-xs text-slate-400 mt-1">Reading preserved page boundaries and sections</p>
         </div>
       ) : error ? (
         <div className="flex-1 flex flex-col items-center justify-center p-8 bg-white text-center">
-          <div className="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mb-3">
+          <div className="w-12 h-12 bg-coral-50 text-coral-600 rounded-2xl flex items-center justify-center mb-3">
             <AlertCircle className="w-6 h-6" />
           </div>
           <h3 className="text-base font-bold text-slate-800">Unable to load this document</h3>
           <p className="text-xs text-slate-500 mt-1 max-w-md">{error}</p>
           <button
             onClick={loadDocument}
-            className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold transition"
+            className="mt-4 px-4 py-2 bg-petrol-600 hover:bg-petrol-700 text-white rounded-lg text-xs font-semibold transition"
           >
             Try Again
           </button>
@@ -377,7 +377,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
           <div className="w-48 sm:w-64 bg-slate-50 border-r border-slate-200 flex flex-col shrink-0">
             <div className="p-3 border-b border-slate-200 bg-slate-100/70 flex items-center justify-between">
               <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                <Layers className="w-3.5 h-3.5 text-blue-600" /> Pages ({totalPages})
+                <Layers className="w-3.5 h-3.5 text-petrol-600" /> Pages ({totalPages})
               </span>
               <span className="text-[11px] text-slate-500 font-medium">Jump to page</span>
             </div>
@@ -396,7 +396,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
                     onClick={() => setCurrentPage(pgNum)}
                     className={`w-full text-left px-3 py-2 rounded-xl text-xs transition flex items-center justify-between gap-2 cursor-pointer ${
                       isActive
-                        ? 'bg-blue-600 text-white font-bold shadow-xs'
+                        ? 'bg-petrol-600 text-white font-bold shadow-xs'
                         : isCited
                         ? 'bg-amber-100 text-amber-900 border border-amber-300 font-semibold'
                         : 'text-slate-700 hover:bg-slate-200/60'
@@ -404,7 +404,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
                   >
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <FileText className={`w-3.5 h-3.5 ${isActive ? 'text-blue-100' : 'text-slate-400'}`} />
+                        <FileText className={`w-3.5 h-3.5 ${isActive ? 'text-powder-100' : 'text-slate-400'}`} />
                         <span>Page {pgNum}</span>
                         {isCited && !isActive && (
                           <span className="text-[10px] bg-amber-500 text-white px-1 rounded font-bold">
@@ -415,7 +415,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
                       {firstSection && (
                         <p
                           className={`text-[10px] truncate max-w-[170px] mt-0.5 ${
-                            isActive ? 'text-blue-100' : 'text-slate-400'
+                            isActive ? 'text-powder-100' : 'text-slate-400'
                           }`}
                           title={firstSection}
                         >
@@ -428,7 +428,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
                       <span
                         className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold shrink-0 ${
                           isActive
-                            ? 'bg-white text-blue-700'
+                            ? 'bg-white text-petrol-800'
                             : 'bg-amber-200 text-amber-900'
                         }`}
                       >

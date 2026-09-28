@@ -38,10 +38,10 @@ export const UsageMonitoring: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header Bar */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
         <div>
           <h3 className="font-bold text-slate-900 text-lg flex items-center gap-2">
-            <BarChart3 className="w-6 h-6 text-blue-600" /> RAG Analytics & Usage Monitoring
+            <BarChart3 className="w-6 h-6 text-petrol-600" /> RAG Analytics & Usage Monitoring
           </h3>
           <p className="text-xs text-slate-500 mt-1">
             Real-time tracking for token consumption, cache performance, cost estimation, and request latency.
@@ -58,29 +58,29 @@ export const UsageMonitoring: React.FC = () => {
 
       {loading ? (
         <div className="py-12 text-center text-slate-400 flex justify-center items-center gap-2">
-          <RefreshCw className="w-5 h-5 animate-spin text-blue-600" />
+          <RefreshCw className="w-5 h-5 animate-spin text-petrol-600" />
           <span className="text-xs font-medium">Loading usage statistics...</span>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-2">
+          <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-2">
             <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
               <span>Total Research Queries</span>
-              <BarChart3 className="w-5 h-5 text-blue-600" />
+              <BarChart3 className="w-5 h-5 text-petrol-600" />
             </div>
-            <div className="text-3xl font-extrabold text-slate-900">{totalQueries}</div>
+            <div className="text-3xl font-extrabold text-darkteal-900">{totalQueries}</div>
             <div className="text-xs text-slate-500 flex justify-between pt-2 border-t border-slate-100">
               <span>Cache Hits: <strong>{cachedQueries}</strong></span>
               <span>Cache Misses: <strong>{cacheMisses}</strong></span>
             </div>
           </div>
 
-          <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-2">
+          <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-2">
             <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
               <span>Cache Hit Rate</span>
-              <Zap className="w-5 h-5 text-amber-500" />
+              <Zap className="w-5 h-5 text-coral-500" />
             </div>
-            <div className="text-3xl font-extrabold text-amber-600">
+            <div className="text-3xl font-extrabold text-coral-600">
               {cacheHitRate.toFixed(1)}%
             </div>
             <div className="text-xs text-slate-500 pt-2 border-t border-slate-100">
@@ -88,23 +88,23 @@ export const UsageMonitoring: React.FC = () => {
             </div>
           </div>
 
-          <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-2">
+          <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-2">
             <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
               <span>Average Latency</span>
-              <Clock className="w-5 h-5 text-teal-600" />
+              <Clock className="w-5 h-5 text-petrol-600" />
             </div>
-            <div className="text-3xl font-extrabold text-teal-700">{avgLatency.toFixed(1)} ms</div>
+            <div className="text-3xl font-extrabold text-petrol-700">{avgLatency.toFixed(1)} ms</div>
             <div className="text-xs text-slate-500 pt-2 border-t border-slate-100">
               Vector retrieval + LLM generation
             </div>
           </div>
 
-          <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-2">
+          <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-2">
             <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
               <span>Total Input Tokens</span>
-              <FileCode className="w-5 h-5 text-indigo-600" />
+              <FileCode className="w-5 h-5 text-crimson-600" />
             </div>
-            <div className="text-3xl font-extrabold text-indigo-900">
+            <div className="text-3xl font-extrabold text-crimson-800">
               {totalInputTokens.toLocaleString()}
             </div>
             <div className="text-xs text-slate-500 pt-2 border-t border-slate-100">
@@ -112,12 +112,12 @@ export const UsageMonitoring: React.FC = () => {
             </div>
           </div>
 
-          <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-2">
+          <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-2">
             <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
               <span>Total Output Tokens</span>
-              <FileCode className="w-5 h-5 text-purple-600" />
+              <FileCode className="w-5 h-5 text-coral-600" />
             </div>
-            <div className="text-3xl font-extrabold text-purple-900">
+            <div className="text-3xl font-extrabold text-coral-800">
               {totalOutputTokens.toLocaleString()}
             </div>
             <div className="text-xs text-slate-500 pt-2 border-t border-slate-100">
@@ -125,12 +125,12 @@ export const UsageMonitoring: React.FC = () => {
             </div>
           </div>
 
-          <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-2">
+          <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-2">
             <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
               <span>Total Estimated Cost</span>
-              <DollarSign className="w-5 h-5 text-emerald-600" />
+              <DollarSign className="w-5 h-5 text-petrol-600" />
             </div>
-            <div className="text-3xl font-extrabold text-emerald-700">
+            <div className="text-3xl font-extrabold text-petrol-800">
               ${estimatedCost.toFixed(4)}
             </div>
             <div className="text-xs text-slate-500 pt-2 border-t border-slate-100 flex justify-between">

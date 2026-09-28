@@ -18,6 +18,7 @@ for p in [str(ROOT_DIR), str(BACKEND_DIR), str(SRC_DIR)]:
         sys.path.insert(0, p)
 
 # Re-export canonical FastAPI app
+# pyrefly: ignore [missing-import]
 from backend.app.main import app
 
 if __name__ == "__main__":

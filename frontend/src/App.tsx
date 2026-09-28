@@ -80,8 +80,8 @@ export const App: React.FC = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-300 gap-3">
-        <RefreshCw className="w-8 h-8 text-blue-500 animate-spin" />
+      <div className="min-h-screen bg-darkteal-950 flex flex-col items-center justify-center text-slate-300 gap-3">
+        <RefreshCw className="w-8 h-8 text-powder-400 animate-spin" />
         <p className="text-sm font-medium">Initializing PharmaLens workspace...</p>
       </div>
     );

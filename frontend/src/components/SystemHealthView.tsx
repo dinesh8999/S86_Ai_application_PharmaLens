@@ -30,10 +30,10 @@ export const SystemHealthView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white rounded-xl shadow-xs border border-slate-200 p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <Activity className="w-6 h-6 text-indigo-600" />
+            <Activity className="w-6 h-6 text-petrol-600" />
             System Infrastructure & Services Health
           </h2>
           <p className="text-sm text-slate-500 mt-1">
@@ -52,8 +52,8 @@ export const SystemHealthView: React.FC = () => {
       </div>
 
       {error && (
-        <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 text-sm text-rose-700 flex items-center gap-3">
-          <AlertTriangle className="w-5 h-5 flex-shrink-0" />
+        <div className="bg-coral-50 border border-coral-200 rounded-xl p-4 text-sm text-coral-800 flex items-center gap-3">
+          <AlertTriangle className="w-5 h-5 flex-shrink-0 text-coral-600" />
           <div>
             <strong>Backend Disconnected:</strong> {error}
           </div>
@@ -62,7 +62,7 @@ export const SystemHealthView: React.FC = () => {
 
       {/* Main Status Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs flex items-center justify-between">
           <div>
             <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Overall API Status</div>
             <div className="text-xl font-bold text-slate-900 mt-1 capitalize flex items-center gap-2">
@@ -71,7 +71,7 @@ export const SystemHealthView: React.FC = () => {
                   <CheckCircle2 className="w-5 h-5" /> Operational
                 </span>
               ) : (
-                <span className="text-amber-600 flex items-center gap-1.5">
+                <span className="text-coral-600 flex items-center gap-1.5">
                   <AlertTriangle className="w-5 h-5" /> Degradation
                 </span>
               )}
@@ -80,7 +80,7 @@ export const SystemHealthView: React.FC = () => {
           <Server className="w-8 h-8 text-slate-400 opacity-60" />
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs flex items-center justify-between">
           <div>
             <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">LLM Inference Model</div>
             <div className="text-sm font-semibold text-slate-900 mt-1 truncate max-w-[180px]">
@@ -88,10 +88,10 @@ export const SystemHealthView: React.FC = () => {
             </div>
             <div className="text-xs text-emerald-600 mt-0.5 font-medium">Ready & Active</div>
           </div>
-          <Cpu className="w-8 h-8 text-indigo-500 opacity-60" />
+          <Cpu className="w-8 h-8 text-petrol-600 opacity-60" />
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs flex items-center justify-between">
           <div>
             <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Embedding Model</div>
             <div className="text-sm font-semibold text-slate-900 mt-1 truncate max-w-[180px]">
@@ -99,10 +99,10 @@ export const SystemHealthView: React.FC = () => {
             </div>
             <div className="text-xs text-emerald-600 mt-0.5 font-medium">Dense Vector Ready</div>
           </div>
-          <HardDrive className="w-8 h-8 text-cyan-500 opacity-60" />
+          <HardDrive className="w-8 h-8 text-powder-600 opacity-60" />
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs flex items-center justify-between">
           <div>
             <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Vector Store (Qdrant)</div>
             <div className="text-sm font-semibold text-slate-900 mt-1 truncate max-w-[180px]">
@@ -110,15 +110,15 @@ export const SystemHealthView: React.FC = () => {
             </div>
             <div className="text-xs text-emerald-600 mt-0.5 font-medium">Connected</div>
           </div>
-          <Database className="w-8 h-8 text-purple-500 opacity-60" />
+          <Database className="w-8 h-8 text-darkteal-700 opacity-60" />
         </div>
       </div>
 
       {/* Component Breakdown Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">
         <div className="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
           <h3 className="font-semibold text-slate-900 flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-indigo-600" />
+            <ShieldCheck className="w-5 h-5 text-petrol-600" />
             Component Diagnostics Breakdown
           </h3>
         </div>

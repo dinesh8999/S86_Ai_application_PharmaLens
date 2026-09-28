@@ -97,7 +97,7 @@ def answer_with_citations(
     except Exception as err:
         logger.error(f"Failed generating query embedding: {err}")
         return fallback_response(
-            "I don't have enough information in the available documents to answer that question.",
+            "I do not have enough information for this question",
             request_id,
             (time.time() - start_time) * 1000,
             error=str(err),
@@ -110,7 +110,7 @@ def answer_with_citations(
     if not chunks:
         latency = (time.time() - start_time) * 1000
         res = fallback_response(
-            "I don't have enough information in the available documents to answer that question.",
+            "I do not have enough information for this question",
             request_id,
             latency,
         )
@@ -134,8 +134,25 @@ def answer_with_citations(
     # 6. LLM Grounded Generation
     answer, input_tokens, output_tokens = generate_cited_answer(question, context)
 
-    if "don't have enough information" in answer.lower():
+    ans_lower = answer.lower()
+    refusal_patterns = [
+        "not have enough information",
+        "don't have enough information",
+        "not contain information",
+        "does not contain",
+        "does not mention",
+        "no information",
+        "not provided in the",
+        "cannot be answered",
+        "unrelated",
+        "not found in the provided",
+        "not available in the",
+        "focuses exclusively on",
+    ]
+    if any(pattern in ans_lower for pattern in refusal_patterns):
+        answer = "I do not have enough information for this question"
         citations = {}
+        sources = []
 
     latency_ms = (time.time() - start_time) * 1000
     cost = calculate_cost(input_tokens, output_tokens)
@@ -145,12 +162,12 @@ def answer_with_citations(
         "answer": answer,
         "citations": citations,
         "sources": sources,
-        "retrieved_chunks": chunks,
-        "context_chunks": chunks,
+        "retrieved_chunks": chunks if citations else [],
+        "context_chunks": chunks if citations else [],
         "used_citations": list(citations.values()) if citations else [],
         "evidence_strength": "Strong" if citations else "Insufficient",
         "conflicts_detected": False,
-        "chunks": chunks,
+        "chunks": chunks if citations else [],
         "usage": {
             "request_id": request_id,
             "cache_hit": False,

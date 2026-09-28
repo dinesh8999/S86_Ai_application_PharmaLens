@@ -26,21 +26,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
   ];
 
   return (
-    <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col h-screen border-r border-slate-800 shrink-0 select-none">
+    <aside className="w-64 bg-darkteal-900 text-slate-300 flex flex-col h-screen border-r border-darkteal-800 shrink-0 select-none">
       {/* Brand Header */}
-      <div className="p-5 flex items-center gap-3 border-b border-slate-800">
-        <div className="p-2 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl text-white shadow-lg shadow-blue-500/20">
+      <div className="p-5 flex items-center gap-3 border-b border-darkteal-800">
+        <div className="p-2.5 bg-gradient-to-tr from-crimson-600 via-coral-500 to-petrol-500 rounded-xl text-white shadow-lg shadow-crimson-600/30">
           <Dna className="w-6 h-6 animate-pulse" />
         </div>
         <div>
-          <h1 className="font-bold text-lg text-white tracking-wide">PharmaLens</h1>
-          <p className="text-xs text-blue-400 font-medium">Clinical Research Assistant</p>
+          <h1 className="font-extrabold text-lg text-white tracking-wide">PharmaLens</h1>
+          <p className="text-xs text-powder-300 font-medium">Clinical Research Assistant</p>
         </div>
       </div>
 
       {/* Primary Navigation Links */}
       <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
-        <div className="px-3 py-1 text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">
+        <div className="px-3 py-1 text-[11px] font-bold text-powder-300/60 uppercase tracking-wider mb-2">
           Clinical Workspace
         </div>
         {primaryItems.map((item) => {
@@ -49,10 +49,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
             <button
               key={item.id}
               onClick={() => onSelectTab(item.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 cursor-pointer ${
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-150 cursor-pointer ${
                 isActive
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/25'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                  ? 'bg-gradient-to-r from-petrol-500 to-petrol-600 text-white shadow-md shadow-petrol-500/30 border border-powder-300/30'
+                  : 'text-slate-300 hover:text-white hover:bg-darkteal-800/70'
               }`}
             >
               {item.icon}
@@ -63,20 +63,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
       </nav>
 
       {/* Bottom Status Indicator */}
-      <div className="p-4 m-3 bg-slate-850 rounded-xl border border-slate-800/80 text-xs text-slate-400">
+      <div className="p-4 m-3 bg-darkteal-950/80 rounded-xl border border-darkteal-800 text-xs text-slate-300">
         <div className="flex items-center justify-between mb-1">
-          <div className="flex items-center gap-2 text-slate-300 font-semibold">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <div className="flex items-center gap-2 text-powder-200 font-semibold">
+            <span className="w-2 h-2 rounded-full bg-powder-300 animate-ping"></span>
             <span>Qdrant Active</span>
           </div>
-          <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-mono font-bold">
+          <span className="text-[10px] px-1.5 py-0.5 rounded bg-darkteal-800 text-powder-200 font-mono font-bold border border-darkteal-700">
             {user?.role || 'RESEARCHER'}
           </span>
         </div>
-        <p className="text-slate-500 text-[11px]">Evidence-First RAG · 632 Chunks</p>
+        <p className="text-slate-400 text-[11px]">Evidence-First RAG · 632 Chunks</p>
       </div>
     </aside>
   );
 };
 
 export default Sidebar;
+

@@ -74,7 +74,7 @@ def build_grounded_system_prompt() -> str:
         "3. ALWAYS cite factual claims using citation markers such as [1], [2] at the end of each statement corresponding to context block numbers.\n"
         "4. Only use citation markers that exist in the provided context blocks.\n"
         "5. If the context contains relevant information related to the question, synthesize and present that factual evidence with citations.\n"
-        "6. If the question cannot be answered from the context, state clearly what is and is not supported by the document with citations to relevant sections."
+        "6. If the question cannot be answered from the context, or if the question asks about a topic, drug, or entity not present in the provided research documents, reply ONLY with the exact sentence: \"I do not have enough information for this question\". Do not output any citations, extra explanation, or speculation."
     )
 
 
@@ -94,18 +94,18 @@ def _extractive_grounded_fallback(question: str, context: str) -> str:
     """
     import re
     if not context.strip():
-        return "I don't have enough information in the available documents to answer that question."
+        return "I do not have enough information for this question"
 
     clean_context = context.replace("\x7f", "\n• ").replace("\u007f", "\n• ")
     blocks = [b.strip() for b in clean_context.split("\n\n---\n\n") if b.strip()]
     if not blocks:
-        return "I don't have enough information in the available documents to answer that question."
+        return "I do not have enough information for this question"
 
     q_lower = question.lower()
 
     # Detect negative / unsupported question patterns (e.g. specific patient dosage not in demo/report)
     if any(phrase in q_lower for phrase in ["dosage for a specific patient", "approved dosage of nicip", "prescribing dose", "pediatric dose", "dose for patient"]):
-        return "I don't have enough information in the available documents to answer that question. The document does not contain a patient-specific prescribing dose."
+        return "I do not have enough information for this question"
 
     # Question-specific keyword extraction
     stopwords = {
@@ -187,7 +187,7 @@ def generate_cited_answer(question: str, context: str) -> tuple[str, int, int]:
     """
     if not context.strip():
         return (
-            "I don't have enough information in the available documents to answer that question.",
+            "I do not have enough information for this question",
             0,
             0,
         )

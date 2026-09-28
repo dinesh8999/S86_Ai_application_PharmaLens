@@ -157,8 +157,8 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
             <span
               className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full border ${
                 isAdmin
-                  ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
-                  : 'bg-blue-50 text-blue-700 border-blue-200'
+                  ? 'bg-crimson-50 text-crimson-800 border-crimson-200'
+                  : 'bg-petrol-50 text-petrol-800 border-petrol-200'
               }`}
             >
               {isAdmin ? <ShieldCheck className="w-3.5 h-3.5" /> : <Stethoscope className="w-3.5 h-3.5" />}
@@ -169,7 +169,7 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
           </div>
 
           <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
-            <BookOpen className={`w-6 h-6 ${isAdmin ? 'text-indigo-600' : 'text-blue-600'}`} />
+            <BookOpen className={`w-6 h-6 ${isAdmin ? 'text-crimson-600' : 'text-petrol-600'}`} />
             {isAdmin ? 'Document Management & Ingestion Workspace' : 'Clinical Document Library'}
           </h2>
           <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-3xl leading-relaxed">
@@ -181,7 +181,7 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
 
         {/* Upload Button: ONLY visible for ADMIN role */}
         {isAdmin && (
-          <label className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition-all text-xs font-bold shadow-md shadow-indigo-600/20 cursor-pointer self-start md:self-auto shrink-0">
+          <label className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-crimson-600 to-crimson-700 hover:from-crimson-700 hover:to-crimson-800 text-white rounded-xl transition-all text-xs font-bold shadow-md shadow-crimson-900/20 cursor-pointer self-start md:self-auto shrink-0">
             <Upload className={`w-4 h-4 ${uploading ? 'animate-spin' : ''}`} />
             <span>{uploading ? 'Ingesting Document...' : 'Upload Clinical Document'}</span>
             <input
@@ -197,8 +197,8 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
 
       {/* Researcher View Information Notice */}
       {!isAdmin && (
-        <div className="p-4 rounded-xl bg-blue-50/70 border border-blue-200/80 text-xs text-blue-900 flex items-start gap-3 shadow-sm">
-          <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+        <div className="p-4 rounded-xl bg-powder-50/80 border border-powder-200 text-xs text-petrol-950 flex items-start gap-3 shadow-xs">
+          <Info className="w-4 h-4 text-petrol-600 shrink-0 mt-0.5" />
           <div className="leading-relaxed">
             <strong>Institutional Repository:</strong> You are viewing approved clinical research assets. File uploads are restricted to authorized Compliance Administrators to maintain rigorous evidentiary provenance. Click <strong>Inspect Document</strong> to read extracted text with page flipping and in-document search.
           </div>
@@ -207,7 +207,7 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
 
       {/* Admin Ingestion Success Alert */}
       {uploadSuccess && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-xs sm:text-sm text-emerald-800 flex items-center gap-2.5 shadow-sm">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-xs sm:text-sm text-emerald-800 flex items-center gap-2.5 shadow-xs">
           <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
           <span className="font-medium">{uploadSuccess}</span>
         </div>
@@ -215,7 +215,7 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
 
       {/* Error Alert */}
       {error && (
-        <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 text-xs sm:text-sm text-rose-700">
+        <div className="bg-coral-50 border border-coral-200 rounded-xl p-4 text-xs sm:text-sm text-coral-800">
           <strong>Error:</strong> {error}
         </div>
       )}
@@ -223,31 +223,31 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
       {/* Corpus Scale Metric Cards */}
       {summary && (
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
-          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs">
             <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total Repository</div>
-            <div className="text-2xl font-extrabold text-indigo-600 mt-1.5">{summary.total_documents} Docs</div>
+            <div className="text-2xl font-extrabold text-petrol-700 mt-1.5">{summary.total_documents} Docs</div>
             <div className="text-xs text-slate-500 mt-0.5 font-medium">{summary.total_pages} Pages · {summary.total_chunks} Chunks</div>
           </div>
 
-          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs">
             <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Clinical Reports</div>
-            <div className="text-2xl font-extrabold text-blue-600 mt-1.5">{summary.clinical_reports_count}</div>
-            <div className="text-xs text-blue-600 mt-0.5 font-medium">Phase II - IV Trial CSRs</div>
+            <div className="text-2xl font-extrabold text-petrol-600 mt-1.5">{summary.clinical_reports_count}</div>
+            <div className="text-xs text-petrol-600 mt-0.5 font-medium">Phase II - IV Trial CSRs</div>
           </div>
 
-          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs">
             <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Drug Package Labels</div>
-            <div className="text-2xl font-extrabold text-emerald-600 mt-1.5">{summary.drug_labels_count}</div>
-            <div className="text-xs text-emerald-600 mt-0.5 font-medium">FDA / EMA Package Inserts</div>
+            <div className="text-2xl font-extrabold text-coral-600 mt-1.5">{summary.drug_labels_count}</div>
+            <div className="text-xs text-coral-600 mt-0.5 font-medium">FDA / EMA Package Inserts</div>
           </div>
 
-          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs">
             <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Safety Bulletins</div>
-            <div className="text-2xl font-extrabold text-amber-600 mt-1.5">{summary.safety_bulletins_count}</div>
-            <div className="text-xs text-amber-600 mt-0.5 font-medium">Pharmacovigilance Alerts</div>
+            <div className="text-2xl font-extrabold text-crimson-600 mt-1.5">{summary.safety_bulletins_count}</div>
+            <div className="text-xs text-crimson-600 mt-0.5 font-medium">Pharmacovigilance Alerts</div>
           </div>
 
-          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm col-span-2 lg:col-span-1">
+          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs col-span-2 lg:col-span-1">
             <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Vector Points</div>
             <div className="text-2xl font-extrabold text-purple-600 mt-1.5">{summary.total_chunks}</div>
             <div className="text-xs text-slate-500 mt-0.5 font-medium">3072-dim Qdrant Chunks</div>
@@ -377,7 +377,7 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
                     <td className="py-3.5 px-4 text-center font-mono text-xs">
                       <span className="font-bold text-slate-900">{doc.page_count || 1}</span>
                       <span className="text-slate-400"> pgs · </span>
-                      <span className="font-bold text-indigo-600">{doc.chunk_count || 1}</span>
+                      <span className="font-bold text-petrol-700">{doc.chunk_count || 1}</span>
                       <span className="text-slate-400"> chks</span>
                     </td>
 
@@ -389,7 +389,7 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
                         <button
                           type="button"
                           onClick={() => handleOpenDoc(doc.document_name)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold transition-all cursor-pointer shadow-sm"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-petrol-50 hover:bg-petrol-100 text-petrol-700 text-xs font-bold transition-all cursor-pointer shadow-xs border border-petrol-200"
                         >
                           <Eye className="w-3.5 h-3.5" />
                           <span>Inspect</span>

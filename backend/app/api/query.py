@@ -106,25 +106,33 @@ def run_query(req: QueryRequest):
                 answer = fallback_ans
 
         # Step 6: Extract explicitly used citations
-        used_citations = extract_used_citations(answer, citation_map)
+        ans_lower = answer.lower().strip()
+        refusal_triggers = [
+            "not have enough information",
+            "don't have enough information",
+            "not contain information",
+            "does not contain",
+            "does not mention",
+            "no information",
+            "not provided in the",
+            "cannot be answered",
+            "unrelated",
+            "not found in the provided",
+            "no sufficiently relevant evidence",
+            "i do not have enough information for this question",
+        ]
 
-        # Check if answer is a pure refusal with zero evidence
-        is_error = "could not generate the answer" in answer.lower()
-        is_pure_refusal = (
-            (answer.strip().lower().startswith("i don't have enough information") and len(answer.strip()) < 120 and not used_citations)
-            or (answer.strip().lower().startswith("no sufficiently relevant evidence") and not used_citations)
-            or (is_error and not used_citations)
-        )
+        is_refusal = any(trigger in ans_lower for trigger in refusal_triggers)
 
-        if is_pure_refusal:
-            strength = "Insufficient"
-            display_chunks = []
+        if is_refusal:
+            answer = "I do not have enough information for this question"
             used_citations = []
-            distinct_sources = []
             citation_map = {}
-            if not is_error:
-                answer = "No sufficiently relevant evidence was found in the available documents to answer this question."
+            display_chunks = []
+            distinct_sources = []
+            strength = "Insufficient"
         else:
+            used_citations = extract_used_citations(answer, citation_map)
             # If used_citations is empty but valid evidence exists, assign top chunk as citation [1]
             if not used_citations and relevant_evidence:
                 top_c = relevant_evidence[0]

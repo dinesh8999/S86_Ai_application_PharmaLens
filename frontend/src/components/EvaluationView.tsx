@@ -40,18 +40,18 @@ export const EvaluationView: React.FC = () => {
   };
 
   const getMetricBadge = (score: number) => {
-    if (score >= 0.85) return 'bg-emerald-100 text-emerald-800 border-emerald-300';
-    if (score >= 0.7) return 'bg-amber-100 text-amber-800 border-amber-300';
-    return 'bg-rose-100 text-rose-800 border-rose-300';
+    if (score >= 0.85) return 'bg-powder-100 text-petrol-950 border-powder-300';
+    if (score >= 0.7) return 'bg-coral-50 text-coral-900 border-coral-200';
+    return 'bg-crimson-50 text-crimson-900 border-crimson-200';
   };
 
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white rounded-xl shadow-xs border border-slate-200 p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <Award className="w-6 h-6 text-indigo-600" />
+            <Award className="w-6 h-6 text-petrol-600" />
             RAG Benchmark & Quality Evaluation
           </h2>
           <p className="text-sm text-slate-500 mt-1">
@@ -71,7 +71,7 @@ export const EvaluationView: React.FC = () => {
           <button
             onClick={handleRunEvaluation}
             disabled={evaluating}
-            className="flex items-center gap-2 px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm font-medium shadow-sm disabled:opacity-50"
+            className="flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-petrol-600 to-petrol-700 hover:from-petrol-700 hover:to-petrol-800 text-white rounded-lg transition text-sm font-medium shadow-xs disabled:opacity-50"
           >
             <Play className={`w-4 h-4 ${evaluating ? 'animate-spin' : ''}`} />
             {evaluating ? 'Evaluating Pipeline...' : 'Run Benchmark Evaluation'}
@@ -80,7 +80,7 @@ export const EvaluationView: React.FC = () => {
       </div>
 
       {error && (
-        <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 text-sm text-rose-700">
+        <div className="bg-coral-50 border border-coral-200 rounded-xl p-4 text-sm text-coral-800">
           <strong>Error:</strong> {error}
         </div>
       )}
@@ -88,9 +88,9 @@ export const EvaluationView: React.FC = () => {
       {/* Summary Stat Cards */}
       {data && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
             <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Overall RAG Score</div>
-            <div className="text-2xl font-bold text-indigo-600 mt-2">
+            <div className="text-2xl font-bold text-petrol-600 mt-2">
               {((data.overall_system_score ?? data.overall_score ?? 0) * 100).toFixed(1)}%
             </div>
             <div className="text-xs text-slate-500 mt-1">
@@ -98,7 +98,7 @@ export const EvaluationView: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
             <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Factual Correctness</div>
             <div className="text-2xl font-bold text-slate-900 mt-2">
               {((data.avg_correctness ?? 0) * 100).toFixed(1)}%
@@ -106,7 +106,7 @@ export const EvaluationView: React.FC = () => {
             <div className="text-xs text-slate-500 mt-1">Semantic overlap with ground truth</div>
           </div>
 
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
             <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Context Grounding</div>
             <div className="text-2xl font-bold text-slate-900 mt-2">
               {((data.avg_grounding ?? 0) * 100).toFixed(1)}%
@@ -114,7 +114,7 @@ export const EvaluationView: React.FC = () => {
             <div className="text-xs text-slate-500 mt-1">Evidence support & zero hallucination</div>
           </div>
 
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
             <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Citation Precision</div>
             <div className="text-2xl font-bold text-slate-900 mt-2">
               {((data.avg_citation_accuracy ?? 0) * 100).toFixed(1)}%
@@ -126,10 +126,10 @@ export const EvaluationView: React.FC = () => {
 
       {/* Benchmark Results Table */}
       {data && data.question_results && data.question_results.length > 0 && (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div className="bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">
           <div className="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
             <h3 className="font-semibold text-slate-900 flex items-center gap-2">
-              <Target className="w-5 h-5 text-indigo-600" />
+              <Target className="w-5 h-5 text-petrol-600" />
               Detailed Benchmark Test Results
             </h3>
             <span className="text-xs text-slate-500">

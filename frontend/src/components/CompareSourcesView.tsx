@@ -27,9 +27,9 @@ export const CompareSourcesView: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
         <div className="flex items-center gap-2">
-          <GitCompare className="w-5 h-5 text-blue-600" />
+          <GitCompare className="w-5 h-5 text-petrol-600" />
           <h3 className="text-base font-bold text-slate-800">Compare Clinical Trial Evidence</h3>
         </div>
         <p className="text-xs text-slate-500">
@@ -42,7 +42,7 @@ export const CompareSourcesView: React.FC = () => {
             <select
               value={study1}
               onChange={(e) => setStudy1(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-petrol-500"
             >
               <option value="STUDY-001">STUDY-001 (Compound A)</option>
               <option value="STUDY-002">STUDY-002 (Drug B)</option>
@@ -55,7 +55,7 @@ export const CompareSourcesView: React.FC = () => {
             <select
               value={study2}
               onChange={(e) => setStudy2(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-petrol-500"
             >
               <option value="STUDY-002">STUDY-002 (Drug B)</option>
               <option value="STUDY-001">STUDY-001 (Compound A)</option>
@@ -70,7 +70,7 @@ export const CompareSourcesView: React.FC = () => {
               value={aspect}
               onChange={(e) => setAspect(e.target.value)}
               placeholder="e.g. adverse events, primary endpoint..."
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:ring-2 focus:ring-petrol-500"
             />
           </div>
         </div>
@@ -78,7 +78,7 @@ export const CompareSourcesView: React.FC = () => {
         <button
           onClick={handleCompare}
           disabled={loading || study1 === study2}
-          className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold text-xs rounded-xl shadow-md shadow-blue-600/20 flex items-center gap-2 transition-all cursor-pointer"
+          className="px-6 py-2.5 bg-gradient-to-r from-petrol-600 to-petrol-700 hover:from-petrol-700 hover:to-petrol-800 disabled:opacity-50 text-white font-semibold text-xs rounded-xl shadow-md shadow-petrol-900/20 flex items-center gap-2 transition-all cursor-pointer"
         >
           {loading ? (
             <>
@@ -93,24 +93,24 @@ export const CompareSourcesView: React.FC = () => {
       </div>
 
       {error && (
-        <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-sm flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
-          <p className="text-xs text-rose-700">{error}</p>
+        <div className="p-4 bg-coral-50 border border-coral-200 rounded-xl text-coral-800 text-sm flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-coral-600 shrink-0 mt-0.5" />
+          <p className="text-xs text-coral-700">{error}</p>
         </div>
       )}
 
       {response && (
         <div className="space-y-6 animate-fadeIn">
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-petrol-600"></span>
                 <h3 className="font-bold text-slate-900 text-base">Comparative Evidence Analysis</h3>
               </div>
 
               {response.conflicts_detected && (
-                <span className="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full border border-amber-300 flex items-center gap-1">
-                  <ShieldAlert className="w-3.5 h-3.5 text-amber-600" /> Conflicting Evidence Detected
+                <span className="px-3 py-1 bg-coral-100 text-coral-900 text-xs font-bold rounded-full border border-coral-300 flex items-center gap-1">
+                  <ShieldAlert className="w-3.5 h-3.5 text-coral-700" /> Conflicting Evidence Detected
                 </span>
               )}
             </div>
@@ -126,9 +126,9 @@ export const CompareSourcesView: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-              <h4 className="font-bold text-xs uppercase tracking-wider text-blue-700 flex items-center gap-2">
-                <FileText className="w-4 h-4 text-blue-600" /> {study1} Evidence Context
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+              <h4 className="font-bold text-xs uppercase tracking-wider text-petrol-700 flex items-center gap-2">
+                <FileText className="w-4 h-4 text-petrol-600" /> {study1} Evidence Context
               </h4>
               <div className="space-y-2 text-xs text-slate-700">
                 {response.retrieved_chunks
@@ -141,9 +141,9 @@ export const CompareSourcesView: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-              <h4 className="font-bold text-xs uppercase tracking-wider text-emerald-700 flex items-center gap-2">
-                <FileText className="w-4 h-4 text-emerald-600" /> {study2} Evidence Context
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+              <h4 className="font-bold text-xs uppercase tracking-wider text-coral-700 flex items-center gap-2">
+                <FileText className="w-4 h-4 text-coral-600" /> {study2} Evidence Context
               </h4>
               <div className="space-y-2 text-xs text-slate-700">
                 {response.retrieved_chunks
